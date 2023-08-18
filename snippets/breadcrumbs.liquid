@@ -1,0 +1,39 @@
+{%- unless template == 'index' -%}
+    {%- if settings.layout_show_breadcrumbs -%}
+        <div class="breadcrumbs pt-15">
+            <div class="container">
+                <ul class="list-unstyled d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                    <li><a href="/" >{{ 'layout.breadcrumbs.home' | t }}</a></li>
+                    {%- if template contains 'page' -%}
+                        <li><span>{{ page.title }}</span></li>
+                    {%- elsif template contains 'product' -%}
+                        {%- if collection.url -%}
+                            <li><a href="{{ collection.url }}">{{ collection.title }}</a></li>
+                        {%- endif -%}
+                        <li><span>{{ product.title }}</span></li>
+                    {%- elsif template contains 'collection' and collection.handle -%}
+                        {%- if current_tags -%}
+                            {% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+                            <li>{{ collection.title | link_to: url }}</li>
+                            <li><span>{{ current_tags | join: " + " }}</span></li>
+                        {%- else -%}
+                            <li><span>{{ collection.title }}</span></li>
+                        {%- endif -%}
+                    {%- elsif template == 'blog' -%}
+                        {%- if current_tags -%}
+                            <li>{{ blog.title | link_to: blog.url }}</li>
+                            <li><span>{{ current_tags | join: " + " }}</span></li>
+                        {%- else -%}
+                            <li><span>{{ blog.title }}</span></li>
+                        {%- endif -%}
+                    {%- elsif template == 'article' -%}
+                        <li>{{ blog.title | link_to: blog.url }}</li>
+                        <li><span>{{ article.title }}</span></li>
+                    {%- else -%}
+                        <li><span>{{ page_title }}</span></li>
+                    {%- endif -%}
+                </ul>
+            </div>
+        </div>
+    {%- endif -%}
+{%- endunless -%}

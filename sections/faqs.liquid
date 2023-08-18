@@ -1,0 +1,45 @@
+<div class="container container--sm">
+    {%- for block in section.blocks -%}
+        <div class="faqs border-top" data-js-accordion="all">
+            <h2 class="faqs__head h5 d-flex align-items-center py-10 mb-0 cursor-pointer{% if block.settings.is_open %} open{% endif %}" data-js-accordion-button><span class="mr-15">{{ block.settings.question }}</span> <i class="faqs__cross ml-auto">{% include 'icon-theme-190' %}</i> </h2>
+            <div{% unless block.settings.is_open %} class="d-none"{% endunless %} data-js-accordion-content>
+                <div class="rte pt-10 pb-30">
+                    {% include 'content-load-template' content: block.settings.answer %}
+                </div>
+            </div>
+        </div>
+    {%- endfor -%}
+</div>
+
+
+{% schema %}
+{
+    "name": "FAQs",
+    "blocks": [
+        {
+            "type": "section",
+            "name": "Section",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "question",
+                    "label": "Question",
+                    "default": "QUESTION"
+                },
+                {
+                    "type": "textarea",
+                    "id": "answer",
+                    "label": "Answer",
+                    "default": "[template:faqs-answer]"
+                },
+                {
+                    "type": "checkbox",
+                    "id": "is_open",
+                    "label": "Is open",
+                    "default": true
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}

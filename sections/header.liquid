@@ -1,0 +1,1418 @@
+{%- if section.settings.sticky == 'desktop_and_mobile' or section.settings.sticky == 'desktop' -%}
+    {%- if section.settings.type != '3' and section.settings.desktop_sticky_type == 'slim' -%}
+        {%- assign need_sticky_sidebar = true -%}
+        {%- assign need_sticky_logo = true -%}
+    {%- elsif section.settings.type == '3' and section.settings.sticky_logo != blank -%}
+        {%- assign need_sticky_logo = true -%}
+    {%- endif -%}
+{%- endif -%}
+<div data-section-id="{{ section.id }}" data-section-type="header"{% include 'layout-get-container-class' %}>
+    <header id="header" class="header position-lg-relative{% if section.settings.sticky != 'disable' %} js-header-sticky{% endif %}" data-js-sticky="{{ section.settings.sticky }}" data-js-desktop-sticky-sidebar="{% if need_sticky_sidebar %}true{% else %}false{% endif %}">
+        {%- for block in section.blocks -%}
+            {%- if block.type == 'tape' -%}
+                <div class="d-none js-header-tape" data-js-show-once="{{ block.settings.show_once }}" data-js-delay="{{ block.settings.delay }}" data-js-cookies-life="{{ block.settings.cookies_life }}">
+                    <div class="header__tape d-flex py-5">
+                        <div class="container d-flex flex-center">
+                            <div class="position-relative d-flex align-items-start align-items-lg-center px-35">
+                                <p class="m-0 px-30 px-lg-0 text-center">{{ block.settings.content }}</p>
+                                <i class="header__tape-close position-absolute right-0 cursor-pointer" data-js-action="close">{% include 'icon-theme-190' %}</i>
+                            </div>
+                        </div>
+                    </div>
+                    {%- if settings.color_header_show_tape_border -%}
+                        <div class="header__border border-bottom d-none d-lg-block"></div>
+                    {%- endif -%}
+                </div>
+            {%- endif -%}
+        {%- endfor -%}
+        {%- capture btn-menu -%}
+            <span class="header__btn-menu d-flex align-items-center d-lg-none mr-20 cursor-pointer js-popup-button" data-js-popup-button="navigation">
+                <i>{% include 'icon-theme-191' %}</i>
+            </span>
+        {%- endcapture -%}
+        {%- capture logo -%}
+            <div class="header__logo{% if need_sticky_logo %} header__logo--sticky-hidden{% endif %} d-flex align-items-center w-100{% if section.settings.type == '3' %} mr-lg-25{% elsif section.settings.type == '2' %} header__logo--center mx-lg-auto{% endif %}" style="max-width: {{ section.settings.logo_width }}px;">
+                {%- if template.name == 'index' -%}
+                    <h1 class="logo h6 w-100 m-0{% if section.settings.logo != blank or section.settings.logo_svg %} text-hide{% endif %}" itemscope itemtype="http://schema.org/Organization"{% if need_sticky_sidebar and section.settings.sticky_logo == blank %} data-js-sticky-replace-element="logo"{% endif %}>
+                {%- else -%}
+                    <div class="logo h6 w-100 m-0{% if section.settings.logo != blank or section.settings.logo_svg %} text-hide{% endif %}" itemscope itemtype="http://schema.org/Organization"{% if need_sticky_sidebar and section.settings.sticky_logo == blank %} data-js-sticky-replace-element="logo"{% endif %}>
+                {%- endif -%}
+                        <a href="/" itemprop="url"{% if section.settings.logo != blank or section.settings.logo_svg %} class="d-block text-hide"{% endif %}>
+                            {%- capture image_attr -%}itemprop="logo"{%- endcapture -%}
+                            {%- capture image_size -%}{{ section.settings.logo_width | times: 2 }}x{%- endcapture -%}
+                            {%- if section.settings.logo_svg -%}
+                                {%- if section.settings.logo_svg_code != blank -%}
+                                    {{ section.settings.logo_svg_code }}
+                                {%- else -%}
+                                    <img src="{{ 'logo.svg' | asset_url }}" class="lazyload" alt="{{ shop.name }}" {{ image_attr }}>
+                                {%- endif -%}
+                            {%- elsif section.settings.logo != blank -%}
+                                {% include 'rimage' with image: section.settings.logo size: image_size scale: 2 alt: shop.name attr: image_attr %}
+                            {%- endif -%}
+                            {{ shop.name }}
+                        </a>
+                {%- if template.name == 'index' -%}
+                    </h1>
+                {%- else -%}
+                    </div>
+                {%- endif -%}
+            </div>
+        {%- endcapture -%}
+        {%- capture btn-account -%}
+            {%- if section.settings.show_button_account and shop.customer_accounts_enabled -%}
+                <a href="/account" class="header__btn-account d-flex align-items-center position-relative ml-25 ml-lg-15 js-popup-button"
+                    data-js-popup-button="account"
+                    {%- if section.settings.enable_tooltips %}
+                        data-js-tooltip
+                        data-tippy-content="{{ 'layout.header.tooltip.account' | t }}"
+                        data-tippy-placement="bottom"
+                        data-tippy-distance="6"
+                    {%- endif -%}
+                >
+                    <i>{% include 'icon-theme-201' %}</i>
+                </a>
+            {%- endif -%}
+        {%- endcapture -%}
+        {%- capture btn-wishlist -%}
+            {%- if section.settings.show_button_wishlist -%}
+                <div class="ml-25 ml-lg-15">
+                    <a href="#" class="header__btn-wishlist d-flex align-items-center position-relative text-nowrap js-popup-button" data-js-popup-button="wishlist"{% if need_sticky_sidebar %} data-js-sticky-replace-element="wishlist"{% endif %}
+                        {%- if section.settings.enable_tooltips %}
+                            data-js-tooltip
+                            data-tippy-content="{{ 'layout.header.tooltip.wishlist' | t }}"
+                            data-tippy-placement="bottom"
+                            data-tippy-distance="6"
+                        {%- endif -%}
+                    >
+                        <i>{% include 'icon-theme-180' %}</i>
+                        {% capture wishlist_count %}{% if customer %}{{ customer.metafields.wishlist | size }}{% else %}0{% endif %}{% endcapture %}
+                        <span class="header__counter" data-js-wishlist-count="{{ wishlist_count }}">{{ wishlist_count }}</span>
+                    </a>
+                </div>
+            {%- endif -%}
+        {%- endcapture -%}
+        {%- capture btn-compare -%}
+            {%- if section.settings.show_button_compare -%}
+                <div class="ml-25 ml-lg-15">
+                    <a href="#" class="header__btn-compare d-flex align-items-center position-relative text-nowrap js-popup-button" data-js-popup-button="compare-full"{% if need_sticky_sidebar %} data-js-sticky-replace-element="compare"{% endif %}
+                        {%- if section.settings.enable_tooltips %}
+                            data-js-tooltip
+                            data-tippy-content="{{ 'layout.header.tooltip.compare' | t }}"
+                            data-tippy-placement="bottom"
+                            data-tippy-distance="6"
+                        {%- endif -%}
+                    >
+                        <i>{% include 'icon-theme-039' %}</i>
+                        {% capture compare_count %}{% if customer %}{{ customer.metafields.compare | size }}{% else %}0{% endif %}{% endcapture %}
+                        <span class="header__counter" data-js-compare-count="{{ compare_count }}">{{ compare_count }}</span>
+                    </a>
+                </div>
+            {%- endif -%}
+        {%- endcapture -%}
+        {%- capture btn-cart -%}
+            {%- if section.settings.show_button_cart -%}
+                <div class="ml-25 ml-lg-15">
+                    <a href="/cart" class="header__btn-cart position-relative d-flex align-items-center text-nowrap js-popup-button" data-js-popup-button="cart"{% if need_sticky_sidebar %} data-js-sticky-replace-element="cart"{% endif %}>
+                        <i class="mr-lg-7">{% include 'icon-theme-109' %}</i>
+                        <span class="d-none d-lg-inline mt-lg-3" data-js-cart-count-desktop="{{ cart.item_count }}">{{ 'layout.header.cart_count' | t: count: cart.item_count }}</span>
+                        <span class="header__counter d-lg-none" data-js-cart-count-mobile="{{ cart.item_count }}">{{ cart.item_count }}</span>
+                    </a>
+                </div>
+            {%- endif -%}
+        {%- endcapture -%}
+        {%- capture currencies -%}
+            {%- if section.settings.show_button_currency and settings.show_multiple_currencies -%}
+                {%- assign codes = 'USD,EUR,GBP,CAD,ARS,AUD,BBD,BDT,BSD,BHD,BRL,BOB,BND,BGN,ILS,MMK,KYD,CLP,CNY,COP,CRC,HRK,CZK,DKK,DOP,XCD,EGP,XPF,FJD,GHS,GTQ,GYD,GEL,HKD,HUF,ISK,INR,IDR,NIS,JMD,JPY,JOD,KZT,KES,KWD,LVL,LTL,MXN,MYR,MUR,MDL,MAD,MNT,MZN,ANG,NZD,NGN,NOK,OMR,PKR,PYG,PEN,PHP,PLN,QAR,RON,RUB,SAR,RSD,SCR,SGD,SYP,ZAR,KRW,LKR,SEK,CHF,TWD,THB,TZS,TTD,TRY,UAH,AED,UYU,VEB,VND,ZMK' | split: ',' -%}
+                {%- assign supported_codes = settings.supported_currencies | split: ' ' -%}
+                {%- assign supported_currencies_full_names = settings.supported_currencies_full_names | split: '|' -%}
+                {%- assign supported_currencies_short_names = settings.supported_currencies_short_names | split: '|' -%}
+                {%- capture list -%}
+                    {%- if supported_codes.size > 0 -%}
+                        <ul class="list-unstyled w-100 px-15 py-30 py-lg-15">
+                            {%- for code in supported_codes -%}
+                                {%- if codes contains code -%}
+                                    {%- assign index = forloop.index | minus: 1 -%}
+                                    <li{% if code == shop.currency %} class="active"{% endif %}{% if supported_currencies_short_names[index] %} data-button-name="{{ supported_currencies_short_names[index] }}"{% endif %} data-currency-code="{{ code }}"><a href="#{{ code }}">{{ supported_currencies_full_names[index] | default: code }}</a></li>
+                                    {%- if code == shop.currency -%}
+                                        {%- assign shop_currency = supported_currencies_short_names[index] -%}
+                                    {%- endif -%}
+                                {%- endif -%}
+                            {%- endfor -%}
+                        </ul>
+                    {%- endif -%}
+                {%- endcapture -%}
+                <div class="position-lg-relative d-none d-lg-block ml-lg-15" data-js-position-desktop="currencies">
+                    <div class="js-position{% if supported_codes.size > 1 %} js-dropdown js-currencies-list{% endif %}" data-js-position-name="currencies">
+                        <div class="header__btn-currency position-relative d-none d-lg-flex align-items-lg-center cursor-pointer" data-js-dropdown-button>
+                            <span class="mt-lg-3" data-current-currency>{{ shop_currency | default: shop.currency }}</span>
+                            {%- if supported_codes.size > 1 -%}
+                                <i>{% include 'icon-theme-229' %}</i>
+                            {%- endif -%}
+                        </div>
+                        {%- if supported_codes.size > 0 -%}
+                            <div class="header__dropdown dropdown d-lg-none position-lg-absolute top-lg-100 right-lg-0" data-js-dropdown>
+                                {{ list }}
+                            </div>
+                        {%- endif -%}
+                    </div>
+                </div>
+            {%- endif -%}
+        {%- endcapture -%}
+        {%- capture languages -%}
+            {%- if section.settings.show_button_language -%}
+                <div class="position-lg-relative d-none d-lg-block ml-lg-15" data-js-position-desktop="languages">
+                    {%- case section.settings.language_app -%}
+                        {% when 'weglot' %}
+                            <div class="js-position js-dropdown js-languages-list d-none-important" data-js-position-name="languages">
+                                <div class="header__btn-language position-relative d-none d-lg-flex align-items-lg-center cursor-pointer" data-js-dropdown-button>
+                                    <span class="mt-lg-3"></span>
+                                    <i>{% include 'icon-theme-229' %}</i>
+                                </div>
+                                <div class="header__dropdown dropdown d-lg-none position-lg-absolute top-lg-100 right-lg-0" data-js-dropdown>
+                                    <ul class="list-unstyled w-100 px-15 pb-30 py-lg-15"></ul>
+                                </div>
+                            </div>
+                        {% when 'langify' %}
+                            <div class="header__ly-languages-switcher px-15 px-lg-0 js-position" data-js-position-name="languages">
+                                {% include 'ly-languages-switcher-theme-disign' %}
+                            </div>
+                        {% when 'none' %}
+                            <div class="js-position js-dropdown js-languages-list" data-js-position-name="languages">
+                                <div class="header__btn-language position-relative d-lg-flex align-items-lg-center cursor-pointer" data-js-dropdown-button>
+                                    <span class="mt-lg-3">{{ section.settings.language_caption }}</span>
+                                    <i>{% include 'icon-theme-229' %}</i>
+                                </div>
+                                <div class="header__dropdown dropdown d-lg-none position-lg-absolute top-lg-100 right-lg-0" data-js-dropdown>
+                                    <ul class="list-unstyled w-100 px-15 pb-30 py-lg-15">
+                                       {%- for language in linklists[section.settings.language_link_list].links -%}
+                                            <li {% if language.active %}class="active"{% endif %}><a href="{{ language.url }}">{{ language.title }}</a></li>
+                                       {%- endfor -%}
+                                    </ul>
+                                </div>
+                            </div>
+                    {%- endcase -%}
+                </div>
+            {%- endif -%}
+        {%- endcapture -%}
+        {%- capture btn-search -%}
+            {%- if section.settings.show_button_search -%}
+                <a href="/search" class="header__btn-search d-none d-lg-flex align-items-lg-center{% if section.settings.type == '1' %} ml-lg-auto{% elsif section.settings.type == '2' or section.settings.type == '3' %} ml-25 ml-lg-15{% endif %} js-popup-button"
+                   data-js-popup-button="navigation"
+                    {%- if section.settings.enable_tooltips and section.settings.type != '1' %}
+                       data-js-tooltip
+                       data-tippy-content="{{ 'layout.header.tooltip.search' | t }}"
+                       data-tippy-placement="bottom"
+                       data-tippy-distance="6"
+                    {%- endif -%}
+                >
+                {%- if section.settings.type == '1' -%}
+                    <span class="mr-lg-7">{{ 'layout.header.search' | t }}</span>
+                {%- endif -%}
+                    <i>{% include 'icon-theme-168' %}</i>
+                </a>
+            {%- endif -%}
+        {%- endcapture -%}
+        {%- capture nav -%}
+            <div class="header__nav d-none d-lg-flex" data-js-position-desktop="menu">
+                {%- if section.settings.type == '1' and settings.color_header_show_bottom_line_border -%}
+                    {%- assign menu_offset = true -%}
+                {%- elsif section.settings.type == '2' and settings.color_header_show_bottom_line_border -%}
+                    {%- assign menu_offset = true -%}
+                {%- elsif section.settings.type == '3' and settings.color_header_show_top_line_border -%}
+                    {%- assign menu_offset = true -%}
+                {%- endif -%}
+                {% include 'header-get-menu' with: menu_offset %}
+            </div>
+        {%- endcapture -%}
+        {%- capture services -%}
+            {%- if section.settings.show_button_services -%}
+                <a href="#" class="header__btn-services position-relative d-flex align-items-center ml-25 ml-lg-15 js-popup-button"
+                   data-js-popup-button="services"
+                   {%- if section.settings.enable_tooltips %}
+                       data-js-tooltip
+                       data-tippy-content="{{ 'layout.header.tooltip.services' | t }}"
+                       data-tippy-placement="bottom"
+                       data-tippy-distance="6"
+                   {%- endif -%}
+                >
+                    <i>{% include 'icon-theme-172' %}</i>
+                </a>
+            {%- endif -%}
+        {%- endcapture -%}
+        {%- if need_sticky_sidebar -%}
+            {%- capture sticky-sidebar -%}
+                <div class="header__sticky-sidebar position-absolute d-none align-items-lg-center top-0 right-0 h-100 mr-15">
+                    <div class="ml-lg-15" data-js-sticky-replace-here="wishlist"></div>
+                    <div class="ml-lg-15" data-js-sticky-replace-here="compare"></div>
+                    <div class="ml-lg-15" data-js-sticky-replace-here="cart"></div>
+                </div>
+            {%- endcapture -%}
+        {%- endif -%}
+        {%- if need_sticky_logo -%}
+            {%- capture sticky-logo -%}
+                <div class="header__sticky-logo d-none align-items-lg-center w-100 h-100{% if section.settings.type == '3' %} header__sticky-logo--containerized mr-25{% else %} header__sticky-logo--displaced position-absolute top-0 left-0 py-6 ml-15{% endif %}"{% if section.settings.sticky_logo == blank %} data-js-sticky-replace-here="logo" style="max-width: {{ section.settings.logo_width }}px;"{% else %} style="max-width: {{ section.settings.sticky_logo_width }}px;"{% endif %}>
+                    {%- if section.settings.sticky_logo != blank -%}
+                        {%- if template.name == 'index' -%}
+                            <h2 class="logo h6 w-100 m-0 text-hide" itemscope itemtype="http://schema.org/Organization">
+                        {%- else -%}
+                            <div class="logo h6 w-100 m-0 text-hide" itemscope itemtype="http://schema.org/Organization">
+                        {%- endif -%}
+                            <a href="/" itemprop="url" class="d-block text-hide">
+                                {%- capture image_size -%}{{ section.settings.sticky_logo_width | times: 2 }}x{%- endcapture -%}
+                                {%- capture image_attr -%}itemprop="logo"{%- endcapture -%}
+                                {% include 'rimage' with image: section.settings.sticky_logo size: image_size scale: 2 alt: shop.name attr: image_attr %}
+                                {{ shop.name }}
+                            </a>
+                        {%- if template.name == 'index' -%}
+                            </h2>
+                        {%- else -%}
+                            </div>
+                        {%- endif -%}
+                    {%- endif -%}
+                </div>
+            {%- endcapture -%}
+        {%- endif -%}
+        {%- case section.settings.type -%}
+        {%- when '1' -%}
+            <div class="header__content"{% if section.settings.desktop_sticky_type == 'wide' %} data-js-desktop-sticky{% endif %} data-js-mobile-sticky>
+                <div class="header__line-top position-relative d-flex px-10 px-lg-0 py-lg-2">
+                    <div class="container d-flex align-items-center">
+                        {{ btn-menu }}
+                        {{ logo }}
+                        <div class="header__sidebar d-flex align-items-center ml-auto">
+                            {{ services }}
+                            {{ btn-account }}
+                            {{ btn-wishlist }}
+                            {{ btn-compare }}
+                            {{ btn-cart }}
+                            {{ currencies }}
+                            {{ languages }}
+                        </div>
+                    </div>
+                </div>
+                {%- if settings.color_header_show_top_line_border -%}
+                    <div class="header__border border-bottom d-none d-lg-block"></div>
+                {%- endif -%}
+                <div{% if section.settings.desktop_sticky_type == 'slim' %} data-js-desktop-sticky{% endif %}>
+                    <div class="header__line-bottom position-relative d-lg-flex py-lg-6">
+                        {{ sticky-logo }}
+                        <div class="container d-lg-flex">
+                            {{ nav }}
+                            {{ btn-search }}
+                        </div>
+                        {{ sticky-sidebar }}
+                    </div>
+                    {%- if settings.color_header_show_bottom_line_border -%}
+                        <div class="header__border border-bottom d-none d-lg-block"></div>
+                    {%- endif -%}
+                </div>
+                {%- if settings.color_header_show_mobile_border -%}
+                    <div class="header__border border-bottom d-lg-none"></div>
+                {%- endif -%}
+            </div>
+        {%- when '2' -%}
+            <div class="header__content"{% if section.settings.desktop_sticky_type == 'wide' %} data-js-desktop-sticky{% endif %} data-js-mobile-sticky>
+                <div class="header__line-top position-relative d-flex px-10 px-lg-0 py-lg-6">
+                    <div class="container position-lg-relative d-flex align-items-center">
+                        {{ btn-menu }}
+                        {{ logo }}
+                        <div class="header__sidebar d-flex align-items-center ml-auto">
+                            {{ btn-search }}
+                            {{ services }}
+                            {{ btn-account }}
+                            {{ btn-wishlist }}
+                            {{ btn-compare }}
+                            {{ btn-cart }}
+                            {{ currencies }}
+                            {{ languages }}
+                        </div>
+                    </div>
+                </div>
+                {%- if settings.color_header_show_top_line_border -%}
+                    <div class="header__border border-bottom d-none d-lg-block"></div>
+                {%- endif -%}
+                <div{% if section.settings.desktop_sticky_type == 'slim' %} data-js-desktop-sticky{% endif %}>
+                    <div class="header__line-bottom position-relative d-lg-flex py-lg-6">
+                        {{ sticky-logo }}
+                        <div class="container d-lg-flex justify-content-lg-center">
+                            {{ nav }}
+                        </div>
+                        {{ sticky-sidebar }}
+                    </div>
+                    {%- if settings.color_header_show_bottom_line_border -%}
+                        <div class="header__border border-bottom d-none d-lg-block"></div>
+                    {%- endif -%}
+                </div>
+                {%- if settings.color_header_show_mobile_border -%}
+                    <div class="header__border border-bottom d-lg-none"></div>
+                {%- endif -%}
+            </div>
+        {%- when '3' -%}
+            <div class="header__content" data-js-desktop-sticky data-js-mobile-sticky>
+                <div class="header__line-top position-relative d-flex px-10 px-lg-0 py-lg-6">
+                    <div class="container d-flex">
+                        {{ btn-menu }}
+                        {{ sticky-logo }}
+                        {{ logo }}
+                        {{ nav }}
+                        <div class="header__sidebar d-flex align-items-center ml-auto">
+                            {{ btn-search }}
+                            {{ services }}
+                            {{ btn-account }}
+                            {{ btn-wishlist }}
+                            {{ btn-compare }}
+                            {{ btn-cart }}
+                            {{ currencies }}
+                            {{ languages }}
+                        </div>
+                    </div>
+                </div>
+                {%- if settings.color_header_show_top_line_border -%}
+                    <div class="header__border border-bottom d-none d-lg-block"></div>
+                {%- endif -%}
+                {%- if settings.color_header_show_mobile_border -%}
+                    <div class="header__border border-bottom d-lg-none"></div>
+                {%- endif -%}
+            </div>
+        {%- endcase -%}
+        {%- for block in section.blocks -%}
+            {%- assign show_bottom_tape = null -%}
+            {%- if block.type == 'bottom_tape' -%}
+                {%- assign for_page = block.settings.for_page | remove: '' | split: ',' -%}
+                {%- if for_page contains template -%}
+                    {%- assign show_bottom_tape = true -%}
+                    {%- elsif for_page contains page.handle -%}
+                    {%- assign show_bottom_tape = true -%}
+                    {%- elsif 'index' contains for_page -%}
+                    {%- assign show_bottom_tape = true -%}
+                    {%- elsif for_page contains 'all' and template != 'index' -%}
+                    {%- assign show_bottom_tape = true -%}
+                {%- endif -%}
+                {%- if show_bottom_tape -%}
+                    <div class="header__bottom-tape position-relative d-none d-lg-flex colorize-theme-bg">
+                        {%- if block.settings.image != blank -%}
+                            {% include 'rimage' with image: block.settings.image size: 'x70' attr: 'class="position-absolute h-100"' disable_lazyload: true %}
+                        {%- endif -%}
+                    </div>
+                {%- endif -%}
+            {%- endif -%}
+        {%- endfor -%}
+    </header>
+</div>
+
+<script>
+    {%- if section.settings.sticky != 'disable' -%}
+    Loader.requireh({type: "script", name: "sticky_header"});
+    {%- endif -%}
+    Loader.requireh({type: "script", name: "header"});
+</script>
+
+{% schema %}
+{
+    "name": "Header",
+    "settings": [
+        {
+            "type": "image_picker",
+            "id": "logo",
+            "label": "Logo image"
+        },
+        {
+            "type": "range",
+            "id": "logo_width",
+            "min": 50,
+            "max": 200,
+            "step": 2,
+            "unit": "px",
+            "label": "Logo image width",
+            "default": 64
+        },
+        {
+            "type": "checkbox",
+            "id": "logo_svg",
+            "label": "SVG logo",
+            "default": true
+        },
+        {
+            "type": "textarea",
+            "id": "logo_svg_code",
+            "label": "Code of SVG logo",
+            "info": "default file is - 'assets/logo.svg'"
+        },
+        {
+            "type": "select",
+            "id": "type",
+            "label": "Type",
+            "default": "1",
+            "options": [
+                {
+                    "value": "1",
+                    "label": "Type #1"
+                },
+                {
+                    "value": "2",
+                    "label": "Type #2"
+                },
+                {
+                    "value": "3",
+                    "label": "Type #3"
+                }
+            ]
+        },
+        {
+            "type": "select",
+            "id": "container",
+            "label": "Content width",
+            "default": "inherit",
+            "options": [
+                {
+                    "value": "inherit",
+                    "label": "Inherit global settings"
+                },
+                {
+                    "value": "fullwidth",
+                    "label": "Full width"
+                },
+                {
+                    "value": "boxed",
+                    "label": "Boxed"
+                }
+            ]
+        },
+        {
+            "type": "link_list",
+            "id": "menu",
+            "label": "Menu",
+            "default": "main-menu"
+        },
+        {
+            "type": "checkbox",
+            "id": "enable_tooltips",
+            "label": "Enable tooltips",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_button_search",
+            "label": "Show button 'Search'",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_button_services",
+            "label": "Show button 'Services'",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_button_account",
+            "label": "Show button 'Account'",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_button_wishlist",
+            "label": "Show button 'Wishlist'",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_button_compare",
+            "label": "Show button 'Compare'",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_button_cart",
+            "label": "Show button 'Cart'",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_button_currency",
+            "label": "Show button 'Currency'",
+            "default": true,
+            "info": "Visible only with enabled global setting multiple currencies"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_button_language",
+            "label": "Show button 'Language'",
+            "default": true,
+            "info": "For multiple languages install app 'Weglot Translate' or 'Langify'"
+        },
+        {
+            "type": "select",
+            "id": "language_app",
+            "label": "Language app",
+            "default": "weglot",
+            "options": [
+                {
+                    "value": "weglot",
+                    "label": "Weglot"
+                },
+                {
+                    "value": "langify",
+                    "label": "Langify"
+                },
+                {
+                    "value": "none",
+                    "label": "None"
+                }
+            ]
+        },
+        {
+            "type": "text",
+            "id": "language_caption",
+            "label": "Caption for language drop down",
+            "info": "Only for Language app = None"
+        },
+        {
+            "type": "link_list",
+            "id": "language_link_list",
+            "label": "Link list for language drop down",
+            "info": "Only for Language app = None"
+        },
+        {
+            "type": "image_picker",
+            "id": "sticky_logo",
+            "label": "Sticky logo image (desktop)"
+        },
+        {
+            "type": "range",
+            "id": "sticky_logo_width",
+            "min": 50,
+            "max": 200,
+            "step": 2,
+            "unit": "px",
+            "label": "Sticky logo image width",
+            "default": 64
+        },
+        {
+            "type": "select",
+            "id": "sticky",
+            "label": "Sticky",
+            "default": "desktop_and_mobile",
+            "options": [
+                {
+                    "value": "disable",
+                    "label": "Disable"
+                },
+                {
+                    "value": "desktop_and_mobile",
+                    "label": "Desktop and mobile"
+                },
+                {
+                    "value": "desktop",
+                    "label": "Only desktop"
+                },
+                {
+                    "value": "mobile",
+                    "label": "Only mobile"
+                }
+            ]
+        },
+        {
+            "type": "select",
+            "id": "desktop_sticky_type",
+            "label": "Desktop sticky type",
+            "default": "slim",
+            "options": [
+                {
+                    "value": "wide",
+                    "label": "Wide"
+                },
+                {
+                    "value": "slim",
+                    "label": "Slim"
+                }
+            ]
+        }
+    ],
+    "blocks": [
+        {
+            "type": "tape",
+            "name": "Tape",
+            "limit": 1,
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "content",
+                    "label": "Content",
+                    "default": "FINAL CLEARANCE: Take 20% Off ‘Sale Must-Haves'"
+                },
+                {
+                    "type": "range",
+                    "id": "delay",
+                    "min": 0,
+                    "max": 60,
+                    "step": 1,
+                    "unit": "sec",
+                    "label": "Delay",
+                    "default": 3
+                },
+                {
+                    "type": "checkbox",
+                    "id": "show_once",
+                    "label": "Show once?",
+                    "info": "If user close tape",
+                    "default": true
+                },
+                {
+                    "type": "select",
+                    "id": "cookies_life",
+                    "label": "Cookies life",
+                    "default": "1",
+                    "options": [
+                        { "value": "1", "label": "1 day" },
+                        { "value": "3", "label": "3 days" },
+                        { "value": "7", "label": "1 week" },
+                        { "value": "31", "label": "1 month" },
+                        { "value": "365", "label": "1 year" }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "bottom_tape",
+            "name": "Bottom tape",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "for_page",
+                    "label": "For page",
+                    "info": "coma is separator, 'all' - add to all pages except index, example: 'all, index, autumn-winter-2018'"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Image"
+                }
+            ]
+        },
+        {
+            "type": "megamenu",
+            "name": "Mega menu",
+            "settings": [
+                {
+                    "type": "header",
+                    "content": "General"
+                },
+                {
+                    "type": "text",
+                    "id": "for_item",
+                    "label": "For item"
+                },
+                {
+                    "type": "range",
+                    "id": "grid",
+                    "min": 1,
+                    "max": 12,
+                    "step": 1,
+                    "unit": "/12",
+                    "label": "Links column size",
+                    "default": 2
+                },
+                {
+                    "type": "checkbox",
+                    "id": "second_level_column",
+                    "label": "Second level is column",
+                    "default": false
+                },
+                {
+                    "type": "range",
+                    "id": "second_level_column_size",
+                    "min": 1,
+                    "max": 50,
+                    "step": 1,
+                    "unit": "lns",
+                    "label": "Column lines size",
+                    "default": 20
+                }
+            ]
+        },
+        {
+            "type": "megamenu_products",
+            "name": "Products (Mega menu)",
+            "settings": [
+                {
+                    "type": "header",
+                    "content": "Products"
+                },
+                {
+                    "type": "text",
+                    "id": "for_item",
+                    "label": "For item"
+                },
+                {
+                    "type": "text",
+                    "id": "for_group",
+                    "label": "For group (Name)"
+                },
+                {
+                    "type": "range",
+                    "id": "grid",
+                    "min": 1,
+                    "max": 12,
+                    "step": 1,
+                    "unit": "/12",
+                    "label": "Column size",
+                    "default": 4
+                },
+                {
+                    "type": "select",
+                    "id": "float",
+                    "label": "Float",
+                    "default": "right",
+                    "options": [
+                        {
+                            "value": "left",
+                            "label": "Left"
+                        },
+                        {
+                            "value": "right",
+                            "label": "Right"
+                        }
+                    ]
+                },
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Title"
+                },
+                {
+                    "type": "collection",
+                    "id": "collection",
+                    "label": "Collection"
+                },
+                {
+                    "type": "select",
+                    "id": "products_per_row",
+                    "label": "Products per row",
+                    "default": "2",
+                    "options": [
+                        {
+                            "value": "1",
+                            "label": "1"
+                        },
+                        {
+                            "value": "2",
+                            "label": "2"
+                        },
+                        {
+                            "value": "3",
+                            "label": "3"
+                        },
+                        {
+                            "value": "4",
+                            "label": "4"
+                        },
+                        {
+                            "value": "6",
+                            "label": "6"
+                        },
+                        {
+                            "value": "12",
+                            "label": "12"
+                        }
+                    ]
+                },
+                {
+                    "type": "range",
+                    "id": "products_rows",
+                    "min": 1,
+                    "max": 6,
+                    "step": 1,
+                    "label": "Rows",
+                    "default": 1
+                }
+            ]
+        },
+        {
+            "type": "megamenu_promobox",
+            "name": "Promo box (Mega menu)",
+            "settings": [
+                {
+                    "type": "header",
+                    "content": "Promo box"
+                },
+                {
+                    "type": "text",
+                    "id": "for_item",
+                    "label": "For item"
+                },
+                {
+                    "type": "text",
+                    "id": "for_group",
+                    "label": "For group (Name)"
+                },
+                {
+                    "type": "range",
+                    "id": "grid",
+                    "min": 1,
+                    "max": 12,
+                    "step": 1,
+                    "unit": "/12",
+                    "label": "Column size",
+                    "default": 4
+                },
+                {
+                    "type": "select",
+                    "id": "float",
+                    "label": "Float",
+                    "default": "right",
+                    "options": [
+                        {
+                            "value": "left",
+                            "label": "Left"
+                        },
+                        {
+                            "value": "right",
+                            "label": "Right"
+                        }
+                    ]
+                },
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Title"
+                },
+                {
+                    "type": "url",
+                    "id": "url",
+                    "label": "Url"
+                },
+                {
+                    "type": "select",
+                    "id": "type",
+                    "label": "Type",
+                    "default": "1",
+                    "options": [
+                        {
+                            "value": "1",
+                            "label": "Type #1"
+                        },
+                        {
+                            "value": "2",
+                            "label": "Type #2"
+                        },
+                        {
+                            "value": "3",
+                            "label": "Type #3"
+                        },
+                        {
+                            "value": "4",
+                            "label": "Type #4"
+                        },
+                        {
+                            "value": "5",
+                            "label": "Type #5"
+                        },
+                        {
+                            "value": "6",
+                            "label": "Type #6"
+                        },
+                        {
+                            "value": "7",
+                            "label": "Type #7"
+                        }
+                    ]
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Image"
+                },
+                {
+                    "type": "range",
+                    "id": "image_size",
+                    "min": 50,
+                    "max": 500,
+                    "step": 10,
+                    "unit": "px",
+                    "label": "Image size",
+                    "default": 400
+                },
+                {
+                    "type": "checkbox",
+                    "id": "format_pjpg",
+                    "label": "Enable format 'pjpg'",
+                    "info": "Don't work with transparent images",
+                    "default": true
+                },
+                {
+                    "type": "checkbox",
+                    "id": "disable_lazyload",
+                    "label": "Disable lazy load",
+                    "default": false
+                },
+                {
+                    "type": "text",
+                    "id": "text_line_1",
+                    "label": "Text line 1",
+                    "default": "Text line 1"
+                },
+                {
+                    "type": "text",
+                    "id": "text_line_2",
+                    "label": "Text line 2",
+                    "default": "Text line 2"
+                },
+                {
+                    "type": "text",
+                    "id": "text_line_3",
+                    "label": "Text line 3",
+                    "default": "Text line 3"
+                },
+                {
+                    "type": "text",
+                    "id": "button_text",
+                    "label": "Button text",
+                    "default": "Button text"
+                },
+                {
+                    "type": "link_list",
+                    "id": "menu",
+                    "label": "Menu"
+                },
+                {
+                    "type": "textarea",
+                    "id": "custom_html",
+                    "label": "Custom HTML"
+                },
+                {
+                    "type": "header",
+                    "content": "Animation"
+                },
+                {
+                    "type": "select",
+                    "id": "animation_from",
+                    "label": "From",
+                    "default": "default",
+                    "options": [
+                        {
+                        "value": "default",
+                        "label": "Default"
+                        },
+                        {
+                        "value": "center",
+                        "label": "Center"
+                        },
+                        {
+                        "value": "top-left",
+                        "label": "Top left"
+                        },
+                        {
+                        "value": "top",
+                        "label": "Top"
+                        },
+                        {
+                        "value": "top-right",
+                        "label": "Top right"
+                        },
+                        {
+                        "value": "right",
+                        "label": "Right"
+                        },
+                        {
+                        "value": "bottom-right",
+                        "label": "Bottom right"
+                        },
+                        {
+                        "value": "bottom",
+                        "label": "Bottom"
+                        },
+                        {
+                        "value": "bottom-left",
+                        "label": "Bottom left"
+                        },
+                        {
+                        "value": "left",
+                        "label": "Left"
+                        }
+                    ]
+                },
+                {
+                    "type": "select",
+                    "id": "animation_to",
+                    "label": "To",
+                    "default": "center",
+                    "options": [
+                        {
+                        "value": "default",
+                        "label": "Default"
+                        },
+                        {
+                        "value": "center",
+                        "label": "Center"
+                        },
+                        {
+                        "value": "top-left",
+                        "label": "Top left"
+                        },
+                        {
+                        "value": "top",
+                        "label": "Top"
+                        },
+                        {
+                        "value": "top-right",
+                        "label": "Top right"
+                        },
+                        {
+                        "value": "right",
+                        "label": "Right"
+                        },
+                        {
+                        "value": "bottom-right",
+                        "label": "Bottom right"
+                        },
+                        {
+                        "value": "bottom",
+                        "label": "Bottom"
+                        },
+                        {
+                        "value": "bottom-left",
+                        "label": "Bottom left"
+                        },
+                        {
+                        "value": "left",
+                        "label": "Left"
+                        }
+                    ]
+                },
+                {
+                    "type": "checkbox",
+                    "id": "animation_from_opacity",
+                    "label": "From opacity",
+                    "default": false
+                },
+                {
+                    "type": "checkbox",
+                    "id": "animation_to_opacity",
+                    "label": "To opacity",
+                    "default": true
+                },
+                {
+                    "type": "header",
+                    "content": "Colors"
+                },
+                {
+                    "type": "color",
+                    "id": "color_text_line_1",
+                    "label": "Text line 1"
+                },
+                {
+                    "type": "color",
+                    "id": "color_text_line_2",
+                    "label": "Text line 2"
+                },
+                {
+                    "type": "color",
+                    "id": "color_text_line_3",
+                    "label": "Text line 3"
+                },
+                {
+                    "type": "select",
+                    "id": "color_button_type",
+                    "label": "Button",
+                    "default": "3",
+                    "options": [
+                        {
+                            "value": "1",
+                            "label": "Type #1 (default)"
+                        },
+                        {
+                            "value": "2",
+                            "label": "Type #2 (invert)"
+                        },
+                        {
+                            "value": "3",
+                            "label": "Type #3 (secondary)"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "megamenu_custom_html",
+            "name": "Custom html (Mega menu)",
+            "settings": [
+                {
+                    "type": "header",
+                    "content": "Custom html"
+                },
+                {
+                    "type": "text",
+                    "id": "for_item",
+                    "label": "For item"
+                },
+                {
+                    "type": "text",
+                    "id": "for_group",
+                    "label": "For group (Name)"
+                },
+                {
+                    "type": "range",
+                    "id": "grid",
+                    "min": 1,
+                    "max": 12,
+                    "step": 1,
+                    "unit": "/12",
+                    "label": "Column size",
+                    "default": 4
+                },
+                {
+                    "type": "select",
+                    "id": "float",
+                    "label": "Float",
+                    "default": "right",
+                    "options": [
+                        {
+                            "value": "left",
+                            "label": "Left"
+                        },
+                        {
+                            "value": "right",
+                            "label": "Right"
+                        }
+                    ]
+                },
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Title"
+                },
+                {
+                    "type": "url",
+                    "id": "url",
+                    "label": "Url"
+                },
+                {
+                    "type": "html",
+                    "id": "content",
+                    "label": "Content",
+                    "default": "<p>Custom html content</p>"
+                }
+            ]
+        },
+        {
+            "type": "megamenu_subscription",
+            "name": "Subscription (Mega menu)",
+            "settings": [
+                {
+                    "type": "header",
+                    "content": "Subscription"
+                },
+                {
+                    "type": "text",
+                    "id": "for_item",
+                    "label": "For item"
+                },
+                {
+                    "type": "text",
+                    "id": "for_group",
+                    "label": "For group (Name)"
+                },
+                {
+                    "type": "range",
+                    "id": "grid",
+                    "min": 1,
+                    "max": 12,
+                    "step": 1,
+                    "unit": "/12",
+                    "label": "Column size",
+                    "default": 4
+                },
+                {
+                    "type": "select",
+                    "id": "float",
+                    "label": "Float",
+                    "default": "right",
+                    "options": [
+                        {
+                            "value": "left",
+                            "label": "Left"
+                        },
+                        {
+                            "value": "right",
+                            "label": "Right"
+                        }
+                    ]
+                },
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Title"
+                },
+                {
+                    "type": "url",
+                    "id": "url",
+                    "label": "Url"
+                },
+                {
+                    "type": "text",
+                    "id": "placeholder",
+                    "label": "Placeholder",
+                    "default": "Enter please your email address"
+                },
+                {
+                    "type": "text",
+                    "id": "button_text",
+                    "label": "Button text",
+                    "default": "SUBSCRIBE!"
+                }
+            ]
+        },
+        {
+            "type": "megamenu_group",
+            "name": "Group (Mega menu)",
+            "settings": [
+                {
+                    "type": "header",
+                    "content": "Group"
+                },
+                {
+                    "type": "text",
+                    "id": "for_item",
+                    "label": "For item"
+                },
+                {
+                    "type": "text",
+                    "id": "name",
+                    "label": "Name"
+                },
+                {
+                    "type": "range",
+                    "id": "grid",
+                    "min": 1,
+                    "max": 12,
+                    "step": 1,
+                    "unit": "/12",
+                    "label": "Column size",
+                    "default": 4
+                },
+                {
+                    "type": "select",
+                    "id": "float",
+                    "label": "Float",
+                    "default": "right",
+                    "options": [
+                        {
+                            "value": "left",
+                            "label": "Left"
+                        },
+                        {
+                            "value": "right",
+                            "label": "Right"
+                        }
+                    ]
+                },
+                {
+                    "type": "select",
+                    "id": "offset",
+                    "label": "Offset",
+                    "default": "default",
+                    "options": [
+                        {
+                            "value": "default",
+                            "label": "Default"
+                        },
+                        {
+                            "value": "small",
+                            "label": "Small"
+                        }
+                    ]
+                },
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Title"
+                },
+                {
+                    "type": "url",
+                    "id": "url",
+                    "label": "Url"
+                }
+            ]
+        },
+        {
+            "type": "megamenu_title_image",
+            "name": "Title image (Mega menu)",
+            "settings": [
+                {
+                    "type": "header",
+                    "content": "Title image",
+                    "info": "Only for second level!"
+                },
+                {
+                    "type": "text",
+                    "id": "for_item",
+                    "label": "For item",
+                    "info": "Example: Women's+Clothing"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Image"
+                },
+                {
+                    "type": "range",
+                    "id": "image_size",
+                    "min": 100,
+                    "max": 300,
+                    "step": 10,
+                    "unit": "px",
+                    "label": "Image size",
+                    "default": 200
+                },
+                {
+                    "type": "url",
+                    "id": "url",
+                    "label": "Url"
+                }
+            ]
+        },
+        {
+            "type": "megamenu_label",
+            "name": "Label (Mega menu)",
+            "settings": [
+                {
+                    "type": "header",
+                    "content": "Label"
+                },
+                {
+                    "type": "text",
+                    "id": "for_item",
+                    "label": "For item",
+                    "info": "Example: Men's+Shoes+Flats"
+                },
+                {
+                    "type": "select",
+                    "id": "type",
+                    "label": "Type",
+                    "default": "hot",
+                    "options": [
+                        {
+                            "value": "hot",
+                            "label": "Hot"
+                        },
+                        {
+                            "value": "sale",
+                            "label": "Sale"
+                        },
+                        {
+                            "value": "new",
+                            "label": "New"
+                        }
+                    ]
+                },
+                {
+                    "type": "text",
+                    "id": "text",
+                    "label": "Text"
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}
+

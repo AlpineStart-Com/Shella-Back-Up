@@ -1,0 +1,101 @@
+{%- assign type = type | default: 'row' -%}
+<div class="social-media d-flex flex-wrap{% if type == 'column' %} flex-lg-column align-items-lg-start{% endif %} justify-content-center justify-content-lg-start">
+    {% capture link_class %}mb-6 mx-15 mx-lg-0 mr-lg-10{% endcapture %}
+    {% capture icon_class %}{% if type == 'column' %} class="mr-3"{% endif %}{% endcapture %}
+    {%- if show_facebook != false and settings.social_facebook != blank -%}
+        <a href="{{ settings.social_facebook }}" target="_blank" class="d-flex align-items-center {{ link_class }}"
+            {% if social_enable_tooltip and type == 'row' %}
+                data-js-tooltip
+                data-tippy-content="{{ 'general.social.names.facebook' | t }}"
+                data-tippy-placement="top"
+                data-tippy-distance="6"
+            {% endif %}
+        >
+            <i{{ icon_class }}>{% include 'icon-social-facebook' %}</i>{% if type == 'column' %} <span class="d-none d-lg-inline">{{ 'general.social.names.facebook' | t }}</span>{% endif %}
+        </a>
+    {%- endif -%}
+    {%- if show_twitter != false and settings.social_twitter != blank -%}
+        <a href="{{ settings.social_twitter }}" target="_blank" class="d-flex align-items-center {{ link_class }}"
+            {% if social_enable_tooltip and type == 'row' %}
+                data-js-tooltip
+                data-tippy-content="{{ 'general.social.names.twitter' | t }}"
+                data-tippy-placement="top"
+                data-tippy-distance="6"
+            {% endif %}
+        >
+            <i{{ icon_class }}>{% include 'icon-social-twitter' %}</i>{% if type == 'column' %} <span class="d-none d-lg-inline">{{ 'general.social.names.twitter' | t }}</span>{% endif %}
+        </a>
+    {%- endif -%}
+    {%- if show_google != false and settings.social_google != blank -%}
+        <a href="{{ settings.social_google }}" target="_blank" class="d-flex align-items-center {{ link_class }}"
+            {% if social_enable_tooltip and type == 'row' %}
+                data-js-tooltip
+                data-tippy-content="{{ 'general.social.names.google' | t }}"
+                data-tippy-placement="top"
+                data-tippy-distance="6"
+            {% endif %}
+        >
+            <i{{ icon_class }}>{% include 'icon-social-google' %}</i>{% if type == 'column' %} <span class="d-none d-lg-inline">{{ 'general.social.names.google' | t }}</span>{% endif %}
+        </a>
+    {%- endif -%}
+    {%- if show_instagram != false and settings.social_instagram != blank -%}
+        <a href="{{ settings.social_instagram }}" target="_blank" class="d-flex align-items-center {{ link_class }}"
+            {% if social_enable_tooltip and type == 'row' %}
+                data-js-tooltip
+                data-tippy-content="{{ 'general.social.names.instagram' | t }}"
+                data-tippy-placement="top"
+                data-tippy-distance="6"
+            {% endif %}
+        >
+            <i{{ icon_class }}>{% include 'icon-social-instagram' %}</i>{% if type == 'column' %} <span class="d-none d-lg-inline">{{ 'general.social.names.instagram' | t }}</span>{% endif %}
+        </a>
+    {%- endif -%}
+    {%- if show_pinterest != false and settings.social_pinterest != blank -%}
+        <a href="{{ settings.social_pinterest }}" target="_blank" class="d-flex align-items-center {{ link_class }}"
+            {% if social_enable_tooltip and type == 'row' %}
+                data-js-tooltip
+                data-tippy-content="{{ 'general.social.names.pinterest' | t }}"
+                data-tippy-placement="top"
+                data-tippy-distance="6"
+            {% endif %}
+        >
+            <i{{ icon_class }}>{% include 'icon-social-pinterest' %}</i>{% if type == 'column' %} <span class="d-none d-lg-inline">{{ 'general.social.names.pinterest' | t }}</span>{% endif %}
+        </a>
+    {%- endif -%}
+    {%- if show_youtube != false and settings.social_youtube != blank -%}
+        <a href="{{ settings.social_youtube }}" target="_blank" class="d-flex align-items-center {{ link_class }}"
+            {% if social_enable_tooltip and type == 'row' %}
+                data-js-tooltip
+                data-tippy-content="{{ 'general.social.names.youtube' | t }}"
+                data-tippy-placement="top"
+                data-tippy-distance="6"
+            {% endif %}
+        >
+            <i{{ icon_class }}>{% include 'icon-social-youtube' %}</i>{% if type == 'column' %} <span class="d-none d-lg-inline">{{ 'general.social.names.youtube' | t }}</span>{% endif %}
+        </a>
+    {%- endif -%}
+    {%- if show_behance != false and settings.social_behance != blank -%}
+        <a href="{{ settings.social_behance }}" target="_blank" class="d-flex align-items-center {{ link_class }}"
+            {% if social_enable_tooltip and type == 'row' %}
+                data-js-tooltip
+                data-tippy-content="{{ 'general.social.names.behance' | t }}"
+                data-tippy-placement="top"
+                data-tippy-distance="6"
+            {% endif %}
+        >
+            <i{{ icon_class }}>{% include 'icon-social-behance' %}</i>{% if type == 'column' %} <span class="d-none d-lg-inline">{{ 'general.social.names.behance' | t }}</span>{% endif %}
+        </a>
+    {%- endif -%}
+    {%- if show_skype != false and settings.social_skype != blank -%}
+        <a href="{{ settings.social_skype }}" target="_blank" class="d-flex align-items-center {{ link_class }}"
+            {% if social_enable_tooltip and type == 'row' %}
+                data-js-tooltip
+                data-tippy-content="{{ 'general.social.names.skype' | t }}"
+                data-tippy-placement="top"
+                data-tippy-distance="6"
+            {% endif %}
+        >
+            <i{{ icon_class }}>{% include 'icon-social-skype' %}</i>{% if type == 'column' %} <span class="d-none d-lg-inline">{{ 'general.social.names.skype' | t }}</span>{% endif %}
+        </a>
+    {%- endif -%}
+</div>

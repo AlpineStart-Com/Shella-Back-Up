@@ -1,0 +1,536 @@
+<div data-section-id="{{ section.id }}" data-section-type="collection-head">
+    <div class="collection-head">
+        {%- assign promoboxes = null -%}
+        {%- assign desktop_title = section.settings.default_desktop_title -%}
+        {%- assign mobile_title = section.settings.default_mobile_title -%}
+        {%- for block in section.blocks -%}
+            {%- if block.type == 'promobox' and block.settings.for_collection == collection.handle -%}
+                {%- capture promobox -%}
+                    {%- if block.settings.grid_responsive != blank -%}
+                        {%- assign grid_responsive = block.settings.grid_responsive | split: ',' -%}
+                        {% capture grid %}col col-{{ grid_responsive[4] }} col-sm-{{ grid_responsive[3] }} col-md-{{ grid_responsive[2] }} col-lg-{{ grid_responsive[1] }} col-xl-{{ grid_responsive[0] }}{% endcapture %}
+                    {%- else -%}
+                        {% capture grid %}col-12 col-md-{{ block.settings.grid }}{% endcapture %}
+                    {%- endif -%}
+                    {% include 'section-res-margins' with root: block %}
+                    <div class="{{ grid }}{{ section_margins }}">
+                        {% if block.settings.type == 'description' and collection.description != blank %}
+                            <div class="rte fs">
+                                {{ collection.description }}
+                            </div>
+                        {% else %}
+                            {%- assign disable_lazyload = block.settings.disable_lazyload -%}
+                            {% include 'promobox' %}
+                        {% endif %}
+                    </div>
+                {%- endcapture -%}
+                {%- assign promoboxes = promoboxes | append: promobox -%}
+            {%- elsif block.type == 'title' and block.settings.for_collection == collection.handle -%}
+                {%- assign desktop_title = block.settings.desktop_title -%}
+                {%- assign mobile_title = block.settings.mobile_title -%}
+            {%- endif -%}
+        {%- endfor -%}
+        {%- if promoboxes -%}
+            <div class="mb-lg-50">
+                <div class="collection-head__promoboxes row">
+                    {{ promoboxes }}
+                </div>
+            </div>
+        {%- endif -%}
+        {%- if desktop_title == 'title' or desktop_title == 'title_with_description' -%}
+            {%- assign desktop_need_title = true -%}
+        {%- endif -%}
+        {%- if desktop_title == 'description' or desktop_title == 'title_with_description' -%}
+            {%- assign desktop_need_description = true -%}
+        {%- endif -%}
+        {%- if mobile_title == 'title' or mobile_title == 'title_with_description' -%}
+            {%- assign mobile_need_title = true -%}
+        {%- endif -%}
+        {%- if mobile_title == 'description' or mobile_title == 'title_with_description' -%}
+            {%- assign mobile_need_description = true -%}
+        {%- endif -%}
+        {%- capture head -%}
+            {%- if desktop_need_title or mobile_need_title -%}
+                {% capture title_class %}{% if mobile_need_title != true %} d-none{% endif %}{% if desktop_need_title %} d-lg-block{% else %} d-lg-none{% endif %}{% endcapture %}
+                <h1 class="h3 mb-10{{ title_class }} text-center text-lg-left">{{ collection.title }}</h1>
+            {%- endif -%}
+            {%- if desktop_need_description or mobile_need_description -%}
+                {% capture description_class %}{% if mobile_need_description != true %} d-none{% endif %}{% if desktop_need_description %} d-lg-block{% else %} d-lg-none{% endif %}{% endcapture %}
+                {%- if collection.description != blank -%}
+                    <div class="rte fs{{ description_class }}">
+                        {{ collection.description }}
+                    </div>
+                {%- endif -%}
+            {%- endif -%}
+        {%- endcapture -%}
+        {%- if head -%}
+            <div class="mb-15">
+                {{ head }}
+            </div>
+        {%- endif -%}
+    </div>
+</div>
+
+<script>
+    Loader.require({type: "script", name: "collection_head"});
+</script>
+
+{% schema %}
+{
+    "name": "Head",
+    "settings": [
+        {
+            "type": "select",
+            "id": "default_desktop_title",
+            "label": "Default desktop title",
+            "default": "title_with_description",
+            "options": [
+                {
+                    "value": "title",
+                    "label": "Only title"
+                },
+                {
+                    "value": "title_with_description",
+                    "label": "Title with description"
+                },
+                {
+                    "value": "description",
+                    "label": "Only description"
+                },
+                {
+                    "value": "disabled",
+                    "label": "Disabled"
+                }
+            ]
+        },
+        {
+            "type": "select",
+            "id": "default_mobile_title",
+            "label": "Default mobile title",
+            "default": "title",
+            "options": [
+                {
+                    "value": "title",
+                    "label": "Only title"
+                },
+                {
+                    "value": "title_with_description",
+                    "label": "Title with description"
+                },
+                {
+                    "value": "description",
+                    "label": "Only description"
+                },
+                {
+                    "value": "disabled",
+                    "label": "Disabled"
+                }
+            ]
+        }
+    ],
+    "blocks": [
+        {
+            "type": "title",
+            "name": "Title",
+            "settings": [
+                {
+                    "type": "collection",
+                    "id": "for_collection",
+                    "label": "For collection"
+                },
+                {
+                    "type": "select",
+                    "id": "desktop_title",
+                    "label": "Desktop title",
+                    "default": "title_with_description",
+                    "options": [
+                        {
+                            "value": "title",
+                            "label": "Only title"
+                        },
+                        {
+                            "value": "title_with_description",
+                            "label": "Title with description"
+                        },
+                        {
+                            "value": "description",
+                            "label": "Only description"
+                        },
+                        {
+                            "value": "disabled",
+                            "label": "Disabled"
+                        }
+                    ]
+                },
+                {
+                    "type": "select",
+                    "id": "mobile_title",
+                    "label": "Mobile title",
+                    "default": "title",
+                    "options": [
+                        {
+                            "value": "title",
+                            "label": "Only title"
+                        },
+                        {
+                            "value": "title_with_description",
+                            "label": "Title with description"
+                        },
+                        {
+                            "value": "description",
+                            "label": "Only description"
+                        },
+                        {
+                            "value": "disabled",
+                            "label": "Disabled"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "promobox",
+            "name": "Promobox",
+            "settings": [
+                {
+                    "type": "collection",
+                    "id": "for_collection",
+                    "label": "For collection"
+                },
+                {
+                    "type": "range",
+                    "id": "grid",
+                    "min": 1,
+                    "max": 12,
+                    "step": 1,
+                    "unit": "/12",
+                    "label": "Size",
+                    "default": 12
+                },
+                {
+                    "type": "text",
+                    "id": "grid_responsive",
+                    "label": "Responsive size",
+                    "info": "Example is '12,12,12,12,12', 1 < value < 12"
+                },
+                {
+                    "type": "text",
+                    "id": "responsive_height",
+                    "label": "Responsive height",
+                    "info": "Example is '550px,500px,400px,350px,120%', value can setting in % (percent) or px (pixels)"
+                },
+                {
+                    "type": "text",
+                    "id": "min_height",
+                    "label": "Min height",
+                    "info": "Must be an integer (Only with 'Responsive height')"
+                },
+                {
+                    "type": "range",
+                    "id": "margin_top",
+                    "min": 0,
+                    "max": 100,
+                    "step": 5,
+                    "unit": "px",
+                    "label": "Margin top",
+                    "default": 0
+                },
+                {
+                    "type": "text",
+                    "id": "margin_top_responsive",
+                    "label": "Responsive margin top",
+                    "info": "Example is '0,0,0,0,0'"
+                },
+                {
+                    "type": "range",
+                    "id": "margin_bottom",
+                    "min": 0,
+                    "max": 100,
+                    "step": 5,
+                    "unit": "px",
+                    "label": "Margin bottom",
+                    "default": 30
+                },
+                {
+                    "type": "text",
+                    "id": "margin_bottom_responsive",
+                    "label": "Responsive margin bottom",
+                    "info": "Example is '0,0,0,0,0'"
+                },
+                {
+                    "type": "header",
+                    "content": "Content"
+                },
+                {
+                    "type": "select",
+                    "id": "type",
+                    "label": "Type",
+                    "default": "4",
+                    "options": [
+                        {
+                            "value": "1",
+                            "label": "Type #1"
+                        },
+                        {
+                            "value": "2",
+                            "label": "Type #2"
+                        },
+                        {
+                            "value": "3",
+                            "label": "Type #3"
+                        },
+                        {
+                            "value": "4",
+                            "label": "Type #4"
+                        },
+                        {
+                            "value": "5",
+                            "label": "Type #5"
+                        },
+                        {
+                            "value": "6",
+                            "label": "Type #6"
+                        },
+                        {
+                            "value": "7",
+                            "label": "Type #7"
+                        },
+                        {
+                            "value": "description",
+                            "label": "Collection description"
+                        }
+                    ]
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Image"
+                },
+                {
+                    "type": "range",
+                    "id": "image_size",
+                    "min": 200,
+                    "max": 2000,
+                    "step": 100,
+                    "unit": "px",
+                    "label": "Image size",
+                    "default": 900
+                },
+                {
+                    "type": "checkbox",
+                    "id": "format_pjpg",
+                    "label": "Enable format 'pjpg'",
+                    "info": "Don't work with transparent images",
+                    "default": true
+                },
+                {
+                    "type": "checkbox",
+                    "id": "disable_lazyload",
+                    "label": "Disable lazy load",
+                    "default": false
+                },
+                {
+                    "type": "url",
+                    "id": "url",
+                    "label": "Url"
+                },
+                {
+                    "type": "text",
+                    "id": "text_line_1",
+                    "label": "Text line 1",
+                    "default": "Text line 1"
+                },
+                {
+                    "type": "text",
+                    "id": "text_line_2",
+                    "label": "Text line 2",
+                    "default": "Text line 2"
+                },
+                {
+                    "type": "text",
+                    "id": "text_line_3",
+                    "label": "Text line 3",
+                    "default": "Text line 3"
+                },
+                {
+                    "type": "text",
+                    "id": "button_text",
+                    "label": "Button text",
+                    "default": "Button text"
+                },
+                {
+                    "type": "link_list",
+                    "id": "menu",
+                    "label": "Menu"
+                },
+                {
+                    "type": "textarea",
+                    "id": "custom_html",
+                    "label": "Custom HTML"
+                },
+                {
+                    "type": "header",
+                    "content": "Animation"
+                },
+                {
+                    "type": "range",
+                    "id": "parallax",
+                    "min": 0,
+                    "max": 20,
+                    "step": 1,
+                    "label": "Parallax of image",
+                    "default": 0,
+                    "info": "Priority over animations"
+                },
+                {
+                    "type": "select",
+                    "id": "animation_from",
+                    "label": "From",
+                    "default": "default",
+                    "options": [
+                        {
+                            "value": "default",
+                            "label": "Default"
+                        },
+                        {
+                            "value": "center",
+                            "label": "Center"
+                        },
+                        {
+                            "value": "top-left",
+                            "label": "Top left"
+                        },
+                        {
+                            "value": "top",
+                            "label": "Top"
+                        },
+                        {
+                            "value": "top-right",
+                            "label": "Top right"
+                        },
+                        {
+                            "value": "right",
+                            "label": "Right"
+                        },
+                        {
+                            "value": "bottom-right",
+                            "label": "Bottom right"
+                        },
+                        {
+                            "value": "bottom",
+                            "label": "Bottom"
+                        },
+                        {
+                            "value": "bottom-left",
+                            "label": "Bottom left"
+                        },
+                        {
+                            "value": "left",
+                            "label": "Left"
+                        }
+                    ]
+                },
+                {
+                    "type": "select",
+                    "id": "animation_to",
+                    "label": "To",
+                    "default": "center",
+                    "options": [
+                        {
+                            "value": "default",
+                            "label": "Default"
+                        },
+                        {
+                            "value": "center",
+                            "label": "Center"
+                        },
+                        {
+                            "value": "top-left",
+                            "label": "Top left"
+                        },
+                        {
+                            "value": "top",
+                            "label": "Top"
+                        },
+                        {
+                            "value": "top-right",
+                            "label": "Top right"
+                        },
+                        {
+                            "value": "right",
+                            "label": "Right"
+                        },
+                        {
+                            "value": "bottom-right",
+                            "label": "Bottom right"
+                        },
+                        {
+                            "value": "bottom",
+                            "label": "Bottom"
+                        },
+                        {
+                            "value": "bottom-left",
+                            "label": "Bottom left"
+                        },
+                        {
+                            "value": "left",
+                            "label": "Left"
+                        }
+                    ]
+                },
+                {
+                    "type": "checkbox",
+                    "id": "animation_from_opacity",
+                    "label": "From opacity",
+                    "default": false
+                },
+                {
+                    "type": "checkbox",
+                    "id": "animation_to_opacity",
+                    "label": "To opacity",
+                    "default": true
+                },
+                {
+                    "type": "header",
+                    "content": "Colors"
+                },
+                {
+                    "type": "color",
+                    "id": "color_text_line_1",
+                    "label": "Text line 1"
+                },
+                {
+                    "type": "color",
+                    "id": "color_text_line_2",
+                    "label": "Text line 2"
+                },
+                {
+                    "type": "color",
+                    "id": "color_text_line_3",
+                    "label": "Text line 3"
+                },
+                {
+                    "type": "select",
+                    "id": "color_button_type",
+                    "label": "Button",
+                    "default": "3",
+                    "options": [
+                        {
+                            "value": "1",
+                            "label": "Type #1 (default)"
+                        },
+                        {
+                            "value": "2",
+                            "label": "Type #2 (invert)"
+                        },
+                        {
+                            "value": "3",
+                            "label": "Type #3 (secondary)"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}

@@ -1,0 +1,1657 @@
+<div data-section-id="{{ section.id }}" data-section-type="home-builder"{% include 'layout-get-container-class' %}>
+    {%- if section.settings.title != blank -%}
+        <h4 class="mb-30 text-center">{% include 'content-load-template' content: section.settings.title %}</h4>
+    {%- endif -%}
+    {% include 'section-res-margins' %}
+    {%- case section.settings.horizontal_align -%}
+    {% when 'left' %}{% assign horizontal_align = 'justify-content-start' %}
+    {% when 'center' %}{% assign horizontal_align = 'justify-content-center' %}
+    {% when 'right' %}{% assign horizontal_align = 'justify-content-end' %}
+    {%- endcase -%}
+    {%- case section.settings.vertical_align -%}
+    {% when 'top' %}{% assign vertical_align = 'align-items-start' %}
+    {% when 'center' %}{% assign vertical_align = 'align-items-center' %}
+    {% when 'bottom' %}{% assign vertical_align = 'align-items-end' %}
+    {%- endcase -%}
+    <div{% if section.settings.overflow_hidden %} class="overflow-x-hidden"{% endif %}>
+        <div class="row{{ section_margins }} {{ horizontal_align }} {{ vertical_align }}{% if section.settings.disable_paddings %} no-gutters{% endif %}">
+            {%- assign block_types = 'slider,slider_02,instagram,promobox,products,custom_html' | split: ',' -%}
+            {%- for block in section.blocks -%}
+                {%- if block_types contains block.type -%}
+                    {%- if block.settings.grid_responsive != blank -%}
+                        {%- assign grid_responsive = block.settings.grid_responsive | split: ',' -%}
+                        {% capture grid %}col col-{{ grid_responsive[4] }} col-sm-{{ grid_responsive[3] }} col-md-{{ grid_responsive[2] }} col-lg-{{ grid_responsive[1] }} col-xl-{{ grid_responsive[0] }}{% endcapture %}
+                    {%- else -%}
+                        {% capture grid %}col-12 col-md-{{ block.settings.grid }}{% endcapture %}
+                    {%- endif -%}
+                    {% include 'section-res-margins' with root: block %}
+                    <div class="{{ grid }}{{ section_margins }}">
+                        {%- case block.type -%}
+                        {%- when 'slider' -%}
+                            {% include 'builder-slider' %}
+                            <script>
+                                Loader.require({type: "style", name: "plugin_revolution"});
+                                Loader.require({type: "script", name: "plugin_revolution_slider"});
+                            </script>
+                        {%- when 'slider_02' -%}
+                            {% include 'builder-slider-02' %}
+                            <script>
+                                Loader.require({type: "style", name: "plugin_slick"});
+                            </script>
+                        {%- when 'instagram' -%}
+                            {% include 'builder-instagram' %}
+                        {%- when 'promobox' -%}
+                            {% include 'promobox' %}
+                        {%- when 'products' -%}
+                            {%- if block.settings.title != blank -%}
+                                <h5 class="h4 mb-35">{{ block.settings.title }}</h5>
+                            {%- endif -%}
+                            {%- assign products = collections[block.settings.collection].products -%}
+                            {%- for product in products limit: block.settings.max_products -%}
+                                {%- assign disable_lazyload = block.settings.disable_lazyload -%}
+                                {% include 'product-featured' %}
+                            {%- endfor -%}
+                        {%- when 'custom_html' -%}
+                            <div class="rte">{{ block.settings.html }}</div>
+                        {%- endcase -%}
+                    </div>
+                {%- endif -%}
+            {%- endfor -%}
+        </div>
+    </div>
+</div>
+
+<script>
+    Loader.require({type: "script", name: "home_builder"});
+</script>
+
+{% schema %}
+{
+    "name": "Builder",
+    "settings": [
+        {
+            "type": "textarea",
+            "id": "title",
+            "label": "Title"
+        },
+        {
+            "type": "select",
+            "id": "container",
+            "label": "Content width",
+            "default": "boxed",
+            "options": [
+                {
+                    "value": "inherit",
+                    "label": "Inherit global settings"
+                },
+                {
+                    "value": "fullwidth",
+                    "label": "Full width"
+                },
+                {
+                    "value": "boxed",
+                    "label": "Boxed"
+                }
+            ]
+        },
+        {
+            "type": "range",
+            "id": "margin_top",
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "unit": "px",
+            "label": "Margin top",
+            "default": 0
+        },
+        {
+            "type": "text",
+            "id": "margin_top_responsive",
+            "label": "Responsive margin top",
+            "info": "Example is '0,0,0,0,0'"
+        },
+        {
+            "type": "range",
+            "id": "margin_bottom",
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "unit": "px",
+            "label": "Margin bottom",
+            "default": 45
+        },
+        {
+            "type": "text",
+            "id": "margin_bottom_responsive",
+            "label": "Responsive margin bottom",
+            "info": "Example is '0,0,0,0,0'"
+        },
+        {
+            "type": "checkbox",
+            "id": "disable_paddings",
+            "label": "Disable paddings",
+            "default": false
+        },
+        {
+            "type": "radio",
+            "id": "horizontal_align",
+            "label": "Horizontal align",
+            "default": "left",
+            "options": [
+                {
+                    "value": "left",
+                    "label": "Left"
+                },
+                {
+                    "value": "center",
+                    "label": "Center"
+                },
+                {
+                    "value": "right",
+                    "label": "Right"
+                }
+            ]
+        },
+        {
+            "type": "radio",
+            "id": "vertical_align",
+            "label": "Vertical align",
+            "default": "top",
+            "options": [
+                {
+                    "value": "top",
+                    "label": "Top"
+                },
+                {
+                    "value": "center",
+                    "label": "Center"
+                },
+                {
+                    "value": "bottom",
+                    "label": "Bottom"
+                }
+            ]
+        },
+        {
+            "type": "checkbox",
+            "id": "overflow_hidden",
+            "label": "Overflow hidden",
+            "default": true
+        },
+        {
+            "type": "paragraph",
+            "content": "Responsive levels are [1260, 1025, 778, 541]"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "slider",
+            "name": "Revolution Slider",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "name",
+                    "label": "Name",
+                    "default": "Slider #1"
+                },
+                {
+                    "type": "header",
+                    "content": "Grid"
+                },
+                {
+                    "type": "range",
+                    "id": "grid",
+                    "min": 1,
+                    "max": 12,
+                    "step": 1,
+                    "unit": "/12",
+                    "label": "Size",
+                    "default": 12
+                },
+                {
+                    "type": "text",
+                    "id": "grid_responsive",
+                    "label": "Responsive size",
+                    "info": "Example is '12,12,12,12,12', 1 < value < 12"
+                },
+                {
+                    "type": "range",
+                    "id": "margin_top",
+                    "min": 0,
+                    "max": 100,
+                    "step": 5,
+                    "unit": "px",
+                    "label": "Margin top",
+                    "default": 0
+                },
+                {
+                    "type": "text",
+                    "id": "margin_top_responsive",
+                    "label": "Responsive margin top",
+                    "info": "Example is '0,0,0,0,0'"
+                },
+                {
+                    "type": "range",
+                    "id": "margin_bottom",
+                    "min": 0,
+                    "max": 100,
+                    "step": 5,
+                    "unit": "px",
+                    "label": "Margin bottom",
+                    "default": 15
+                },
+                {
+                    "type": "text",
+                    "id": "margin_bottom_responsive",
+                    "label": "Responsive margin bottom",
+                    "info": "Example is '0,0,0,0,0'"
+                },
+                {
+                    "type": "header",
+                    "content": "Settings"
+                },
+                {
+                    "type": "text",
+                    "id": "gridwidth",
+                    "label": "Grid width",
+                    "default": "1440,1025,778,541",
+                    "info": "Separator is ','"
+                },
+                {
+                    "type": "text",
+                    "id": "gridheight",
+                    "label": "Grid height",
+                    "default": "550,700,650,600",
+                    "info": "Separator is ','"
+                },
+                {
+                    "type": "text",
+                    "id": "minheight",
+                    "label": "Min height",
+                    "default": "550"
+                },
+                {
+                    "type": "text",
+                    "id": "image_height",
+                    "label": "Image height size",
+                    "default": "550"
+                },
+                {
+                    "type": "checkbox",
+                    "id": "preload_spacer",
+                    "label": "Preload spacer",
+                    "default": false
+                },
+                {
+                    "type": "checkbox",
+                    "id": "arrows",
+                    "label": "Arrows",
+                    "default": false
+                },
+                {
+                    "type": "checkbox",
+                    "id": "bullets",
+                    "label": "Bullets",
+                    "default": true
+                },
+                {
+                    "type": "range",
+                    "id": "delay",
+                    "min": 3,
+                    "max": 15,
+                    "step": 1,
+                    "label": "Delay (seconds)",
+                    "default": 7
+                }
+            ]
+        },
+        {
+            "type": "slide",
+            "name": "Slide for Revolution",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "for_slider",
+                    "label": "For slider (name)",
+                    "default": "Slider #1"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Link"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Image"
+                },
+                {
+                    "type": "text",
+                    "id": "video_mp4_url",
+                    "label": "Video Url",
+                    "info": "Video type is \"mp4\""
+                },
+                {
+                    "type": "video_url",
+                    "id": "video_external_url",
+                    "label": "Youtube or Vimeo video URL",
+                    "accept": ["youtube", "vimeo"]
+                },
+                {
+                    "type": "header",
+                    "content": "HTML layer"
+                },
+                {
+                    "type": "textarea",
+                    "id": "html",
+                    "label": "HTML",
+                    "default": "[template:promo-text]"
+                },
+                {
+                    "type": "radio",
+                    "id": "position_h",
+                    "label": "Horizontal position",
+                    "default": "center",
+                    "options": [
+                        {
+                            "value": "left",
+                            "label": "Left"
+                        },
+                        {
+                            "value": "center",
+                            "label": "Center"
+                        },
+                        {
+                            "value": "right",
+                            "label": "Right"
+                        }
+                    ]
+                },
+                {
+                    "type": "range",
+                    "id": "offset_h",
+                    "min": 0,
+                    "max": 200,
+                    "step": 5,
+                    "label": "Horizontal offset",
+                    "default": 0
+                },
+                {
+                    "type": "checkbox",
+                    "id": "offset_reverse_h",
+                    "label": "Reverse horizontal offset",
+                    "default": false
+                },
+                {
+                    "type": "radio",
+                    "id": "position_v",
+                    "label": "Vertical position",
+                    "default": "center",
+                    "options": [
+                        {
+                            "value": "top",
+                            "label": "Top"
+                        },
+                        {
+                            "value": "center",
+                            "label": "Center"
+                        },
+                        {
+                            "value": "bottom",
+                            "label": "Bottom"
+                        }
+                    ]
+                },
+                {
+                    "type": "range",
+                    "id": "offset_v",
+                    "min": 0,
+                    "max": 200,
+                    "step": 5,
+                    "label": "Vertical offset",
+                    "default": 10
+                },
+                {
+                    "type": "checkbox",
+                    "id": "offset_reverse_v",
+                    "label": "Reverse vertical offset",
+                    "default": true
+                },
+                {
+                    "type": "select",
+                    "id": "align",
+                    "label": "Align",
+                    "default": "center",
+                    "options": [
+                        {
+                            "value": "left",
+                            "label": "Left"
+                        },
+                        {
+                            "value": "center",
+                            "label": "Center"
+                        },
+                        {
+                            "value": "right",
+                            "label": "Right"
+                        }
+                    ]
+                },
+                {
+                    "type": "range",
+                    "id": "width",
+                    "min": 200,
+                    "max": 1200,
+                    "step": 50,
+                    "label": "Width",
+                    "default": 450
+                },
+                {
+                    "type": "text",
+                    "id": "responsive_width",
+                    "label": "Responsive width",
+                    "info": "Example: '700', '600', '500', '450'"
+                },
+                {
+                    "type": "range",
+                    "id": "delay",
+                    "min": 0,
+                    "max": 60,
+                    "step": 1,
+                    "label": "Delay",
+                    "default": 0,
+                    "info": "0 is disabled personal slide delay"
+                },
+                {
+                    "type": "header",
+                    "content": "Effects"
+                },
+                {
+                    "type": "text",
+                    "id": "slide_animation",
+                    "label": "Slide animation",
+                    "default": "<li data-transition=\"random-premium\">",
+                    "info": "Take animation names in [Slider Documentation](https://www.themepunch.com/revsliderjquery-doc/slide-transitions/)"
+                },
+                {
+                    "type": "text",
+                    "id": "html_animation",
+                    "label": "HTML layer animation",
+                    "default": "data-frames='[{\"delay\": 0, \"speed\": 300, \"from\": \"opacity: 0\", \"to\": \"opacity: 1\"}, {\"delay\": \"wait\", \"speed\": 300, \"to\": \"opacity: 0\"}]'",
+                    "info": "Take animation presets in [Slider Documentation](https://www.themepunch.com/revsliderjquery-doc/layer-transitions/)"
+                },
+                {
+                    "type": "range",
+                    "id": "image_parallax",
+                    "min": 0,
+                    "max": 16,
+                    "step": 1,
+                    "label": "Parallax of image",
+                    "default": 10
+                },
+                {
+                    "type": "range",
+                    "id": "content_parallax",
+                    "min": 0,
+                    "max": 16,
+                    "step": 1,
+                    "label": "Parallax of content",
+                    "default": 0
+                }
+            ]
+        },
+        {
+            "type": "slider_02",
+            "name": "Slick Slider",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "name",
+                    "label": "Name",
+                    "default": "Slider #2"
+                },
+                {
+                    "type": "header",
+                    "content": "Grid"
+                },
+                {
+                    "type": "range",
+                    "id": "grid",
+                    "min": 1,
+                    "max": 12,
+                    "step": 1,
+                    "unit": "/12",
+                    "label": "Size",
+                    "default": 12
+                },
+                {
+                    "type": "text",
+                    "id": "grid_responsive",
+                    "label": "Responsive size",
+                    "info": "Example is '12,12,12,12,12', 1 < value < 12"
+                },
+                {
+                    "type": "range",
+                    "id": "margin_top",
+                    "min": 0,
+                    "max": 100,
+                    "step": 5,
+                    "unit": "px",
+                    "label": "Margin top",
+                    "default": 0
+                },
+                {
+                    "type": "text",
+                    "id": "margin_top_responsive",
+                    "label": "Responsive margin top",
+                    "info": "Example is '0,0,0,0,0'"
+                },
+                {
+                    "type": "range",
+                    "id": "margin_bottom",
+                    "min": 0,
+                    "max": 100,
+                    "step": 5,
+                    "unit": "px",
+                    "label": "Margin bottom",
+                    "default": 15
+                },
+                {
+                    "type": "text",
+                    "id": "margin_bottom_responsive",
+                    "label": "Responsive margin bottom",
+                    "info": "Example is '0,0,0,0,0'"
+                },
+                {
+                    "type": "header",
+                    "content": "Settings"
+                },
+                {
+                    "type": "text",
+                    "id": "responsive_height",
+                    "label": "Responsive height",
+                    "info": "Example is '550px,500px,400px,350px,120%', value can setting in % (percent) or px (pixels)",
+                    "default": "550px,550px,550px,550px"
+                },
+                {
+                    "type": "text",
+                    "id": "min_height",
+                    "label": "Min height",
+                    "info": "Must be an integer (pixels)",
+                    "default": "550"
+                },
+                {
+                    "type": "checkbox",
+                    "id": "arrows",
+                    "label": "Arrows",
+                    "default": false
+                },
+                {
+                    "type": "checkbox",
+                    "id": "bullets",
+                    "label": "Bullets",
+                    "default": true
+                },
+                {
+                    "type": "range",
+                    "id": "speed",
+                    "min": 3,
+                    "max": 15,
+                    "step": 1,
+                    "label": "Speed (seconds)",
+                    "default": 7
+                }
+            ]
+        },
+        {
+            "type": "slide_02",
+            "name": "Slide for Slick",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "for_slider",
+                    "label": "For slider (name)",
+                    "default": "Slider #2"
+                },
+                {
+                    "type": "url",
+                    "id": "url",
+                    "label": "Link"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Image"
+                },
+                {
+                    "type": "range",
+                    "id": "image_size",
+                    "min": 200,
+                    "max": 2000,
+                    "step": 100,
+                    "unit": "px",
+                    "label": "Image size",
+                    "default": 900
+                },
+                {
+                    "type": "checkbox",
+                    "id": "format_pjpg",
+                    "label": "Enable format 'pjpg'",
+                    "info": "Don't work with transparent images",
+                    "default": true
+                },
+                {
+                    "type": "checkbox",
+                    "id": "disable_lazyload",
+                    "label": "Disable lazy load",
+                    "default": false
+                },
+                {
+                    "type": "text",
+                    "id": "video_mp4_url",
+                    "label": "Video Url",
+                    "info": "Video type is \"mp4\""
+                },
+                {
+                    "type": "video_url",
+                    "id": "video_external_url",
+                    "label": "Youtube or Vimeo video URL",
+                    "accept": ["youtube", "vimeo"]
+                },
+                {
+                    "type": "checkbox",
+                    "id": "video_autoplay",
+                    "label": "Autoplay",
+                    "default": true
+                },
+                {
+                    "type": "checkbox",
+                    "id": "video_controls",
+                    "label": "Controls",
+                    "default": false
+                },
+                {
+                    "type": "header",
+                    "content": "HTML layer"
+                },
+                {
+                    "type": "textarea",
+                    "id": "html",
+                    "label": "HTML",
+                    "default": "[template:promo-text]"
+                },
+                {
+                    "type": "checkbox",
+                    "id": "text_bg",
+                    "label": "Enable text background"
+                },
+                {
+                    "type": "text",
+                    "id": "text_bg_size",
+                    "label": "Text background size (width|height)",
+                    "info": "Example: 600px|300px",
+                    "default": "600px|300px"
+                },
+                {
+                    "type": "text",
+                    "id": "text_bg_mt",
+                    "label": "Text background margin top",
+                    "info": "Example: -10px, 10px",
+                    "default": "0px"
+                },
+                {
+                    "type": "range",
+                    "id": "text_bg_opacity",
+                    "min": 0.1,
+                    "max": 1,
+                    "step": 0.1,
+                    "label": "Text background opacity",
+                    "default": 0.8
+                },
+                {
+                    "type": "checkbox",
+                    "id": "text_bg_disable_mobile",
+                    "label": "Text background disable in mobile"
+                },
+                {
+                    "type": "radio",
+                    "id": "position_h",
+                    "label": "Horizontal position",
+                    "default": "center",
+                    "options": [
+                        {
+                            "value": "left",
+                            "label": "Left"
+                        },
+                        {
+                            "value": "center",
+                            "label": "Center"
+                        },
+                        {
+                            "value": "right",
+                            "label": "Right"
+                        }
+                    ]
+                },
+                {
+                    "type": "range",
+                    "id": "offset_h",
+                    "min": 0,
+                    "max": 200,
+                    "step": 5,
+                    "label": "Horizontal offset",
+                    "default": 0
+                },
+                {
+                    "type": "checkbox",
+                    "id": "offset_reverse_h",
+                    "label": "Reverse horizontal offset",
+                    "default": false
+                },
+                {
+                    "type": "radio",
+                    "id": "position_v",
+                    "label": "Vertical position",
+                    "default": "center",
+                    "options": [
+                        {
+                            "value": "top",
+                            "label": "Top"
+                        },
+                        {
+                            "value": "center",
+                            "label": "Center"
+                        },
+                        {
+                            "value": "bottom",
+                            "label": "Bottom"
+                        }
+                    ]
+                },
+                {
+                    "type": "range",
+                    "id": "offset_v",
+                    "min": 0,
+                    "max": 200,
+                    "step": 5,
+                    "label": "Vertical offset",
+                    "default": 10
+                },
+                {
+                    "type": "checkbox",
+                    "id": "offset_reverse_v",
+                    "label": "Reverse vertical offset",
+                    "default": true
+                },
+                {
+                    "type": "select",
+                    "id": "align",
+                    "label": "Align",
+                    "default": "center",
+                    "options": [
+                        {
+                            "value": "left",
+                            "label": "Left"
+                        },
+                        {
+                            "value": "center",
+                            "label": "Center"
+                        },
+                        {
+                            "value": "right",
+                            "label": "Right"
+                        }
+                    ]
+                },
+                {
+                    "type": "range",
+                    "id": "width",
+                    "min": 200,
+                    "max": 1200,
+                    "step": 50,
+                    "label": "Width",
+                    "default": 450
+                },
+                {
+                    "type": "header",
+                    "content": "Effects"
+                },
+                {
+                    "type": "select",
+                    "id": "animation_text",
+                    "label": "Animation text",
+                    "default": "scale-in",
+                    "options": [
+                        {
+                            "value": "none",
+                            "label": "None"
+                        },
+                        {
+                            "value": "scale-in",
+                            "label": "Scale In"
+                        },
+                        {
+                            "value": "scale-out",
+                            "label": "Scale Out"
+                        },
+                        {
+                            "value": "translate-top",
+                            "label": "Translate Top"
+                        },
+                        {
+                            "value": "translate-bottom",
+                            "label": "Translate Bottom"
+                        },
+                        {
+                            "value": "translate-left",
+                            "label": "Translate Left"
+                        },
+                        {
+                            "value": "translate-right",
+                            "label": "Translate Right"
+                        }
+                    ]
+                },
+                {
+                    "type": "header",
+                    "content": "Colors"
+                },
+                {
+                    "type": "color",
+                    "id": "color_text_bg",
+                    "label": "Text background"
+                }
+            ]
+        },
+        {
+            "type": "instagram",
+            "name": "Instagram",
+            "limit": 1,
+            "settings": [
+                {
+                    "type": "header",
+                    "content": "Grid"
+                },
+                {
+                    "type": "range",
+                    "id": "grid",
+                    "min": 1,
+                    "max": 12,
+                    "step": 1,
+                    "unit": "/12",
+                    "label": "Size",
+                    "default": 12
+                },
+                {
+                    "type": "text",
+                    "id": "grid_responsive",
+                    "label": "Responsive size",
+                    "info": "Example is '12,12,12,12,12', 1 < value < 12"
+                },
+                {
+                    "type": "range",
+                    "id": "fixed_height",
+                    "min": 0,
+                    "max": 200,
+                    "step": 10,
+                    "unit": "%",
+                    "label": "Fixed height",
+                    "info": "0 - is disabled",
+                    "default": 100
+                },
+                {
+                    "type": "range",
+                    "id": "margin_top",
+                    "min": 0,
+                    "max": 100,
+                    "step": 5,
+                    "unit": "px",
+                    "label": "Margin top",
+                    "default": 0
+                },
+                {
+                    "type": "text",
+                    "id": "margin_top_responsive",
+                    "label": "Responsive margin top",
+                    "info": "Example is '0,0,0,0,0'"
+                },
+                {
+                    "type": "range",
+                    "id": "margin_bottom",
+                    "min": 0,
+                    "max": 100,
+                    "step": 5,
+                    "unit": "px",
+                    "label": "Margin bottom",
+                    "default": 15
+                },
+                {
+                    "type": "text",
+                    "id": "margin_bottom_responsive",
+                    "label": "Responsive margin bottom",
+                    "info": "Example is '0,0,0,0,0'"
+                },
+                {
+                    "type": "header",
+                    "content": "Settings"
+                },
+                {
+                    "type": "text",
+                    "id": "user_id",
+                    "label": "User ID",
+                    "default": "8479142472"
+                },
+                {
+                    "type": "text",
+                    "id": "client_id",
+                    "label": "Client ID",
+                    "default": "6aec5d3af5d145069a52238996938760"
+                },
+                {
+                    "type": "text",
+                    "id": "access_token",
+                    "label": "Access token",
+                    "default": "8479142472.6aec5d3.6a2dd187899b4bb78e5a91de4a359d07"
+                },
+                {
+                    "type": "checkbox",
+                    "id": "inner_disable_paddings",
+                    "label": "Disable paddings",
+                    "default": true
+                },
+                {
+                    "type": "range",
+                    "id": "limit",
+                    "min": 1,
+                    "max": 50,
+                    "step": 1,
+                    "label": "Items limit",
+                    "default": 12
+                },
+                {
+                    "type": "select",
+                    "id": "inner_grid",
+                    "label": "Size",
+                    "default": "2",
+                    "options": [
+                        {
+                            "value": "2",
+                            "label": "2/12"
+                        },
+                        {
+                            "value": "3",
+                            "label": "3/12"
+                        },
+                        {
+                            "value": "4",
+                            "label": "4/12"
+                        },
+                        {
+                            "value": "6",
+                            "label": "6/12"
+                        },
+                        {
+                            "value": "12",
+                            "label": "12/12"
+                        }
+                    ]
+                },
+                {
+                    "type": "text",
+                    "id": "inner_grid_responsive",
+                    "label": "Responsive size",
+                    "info": "Example is '12,12,12,12,12', 1 < value < 12"
+                },
+                {
+                    "type": "checkbox",
+                    "id": "disable_lazyload",
+                    "label": "Disable lazy load",
+                    "default": false
+                }
+            ]
+        },
+        {
+            "type": "instagram_block",
+            "name": "Instagram block",
+            "settings": [
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Image"
+                },
+                {
+                    "type": "range",
+                    "id": "image_size",
+                    "min": 150,
+                    "max": 300,
+                    "step": 5,
+                    "unit": "px",
+                    "label": "Image size",
+                    "default": 195
+                },
+                {
+                    "type": "checkbox",
+                    "id": "format_pjpg",
+                    "label": "Enable format 'pjpg'",
+                    "info": "Don't work with transparent images",
+                    "default": true
+                },
+                {
+                    "type": "checkbox",
+                    "id": "disable_lazyload",
+                    "label": "Disable lazy load",
+                    "default": false
+                },
+                {
+                    "type": "url",
+                    "id": "url",
+                    "label": "Url"
+                },
+                {
+                    "type": "textarea",
+                    "id": "content",
+                    "label": "Content",
+                    "default": "[template:instagram-block]"
+                }
+            ]
+        },
+        {
+            "type": "promobox",
+            "name": "Promo box",
+            "settings": [
+                {
+                    "type": "header",
+                    "content": "Grid"
+                },
+                {
+                    "type": "range",
+                    "id": "grid",
+                    "min": 1,
+                    "max": 12,
+                    "step": 1,
+                    "unit": "/12",
+                    "label": "Size",
+                    "default": 12
+                },
+                {
+                    "type": "text",
+                    "id": "grid_responsive",
+                    "label": "Responsive size",
+                    "info": "Example is '12,12,12,12,12', 1 < value < 12"
+                },
+                {
+                    "type": "text",
+                    "id": "responsive_height",
+                    "label": "Responsive height",
+                    "info": "Example is '550px,500px,400px,350px,120%', value can setting in % (percent) or px (pixels)"
+                },
+                {
+                    "type": "text",
+                    "id": "min_height",
+                    "label": "Min height",
+                    "info": "Must be an integer (pixels)"
+                },
+                {
+                    "type": "range",
+                    "id": "margin_top",
+                    "min": 0,
+                    "max": 100,
+                    "step": 5,
+                    "unit": "px",
+                    "label": "Margin top",
+                    "default": 0
+                },
+                {
+                    "type": "text",
+                    "id": "margin_top_responsive",
+                    "label": "Responsive margin top",
+                    "info": "Example is '0,0,0,0,0'"
+                },
+                {
+                    "type": "range",
+                    "id": "margin_bottom",
+                    "min": 0,
+                    "max": 100,
+                    "step": 5,
+                    "unit": "px",
+                    "label": "Margin bottom",
+                    "default": 15
+                },
+                {
+                    "type": "text",
+                    "id": "margin_bottom_responsive",
+                    "label": "Responsive margin bottom",
+                    "info": "Example is '0,0,0,0,0'"
+                },
+                {
+                    "type": "header",
+                    "content": "Settings"
+                },
+                {
+                    "type": "select",
+                    "id": "type",
+                    "label": "Type",
+                    "default": "4",
+                    "options": [
+                        {
+                            "value": "1",
+                            "label": "Type #1"
+                        },
+                        {
+                            "value": "2",
+                            "label": "Type #2"
+                        },
+                        {
+                            "value": "3",
+                            "label": "Type #3"
+                        },
+                        {
+                            "value": "4",
+                            "label": "Type #4"
+                        },
+                        {
+                            "value": "5",
+                            "label": "Type #5"
+                        },
+                        {
+                            "value": "6",
+                            "label": "Type #6"
+                        },
+                        {
+                            "value": "7",
+                            "label": "Type #7"
+                        }
+                    ]
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Image"
+                },
+                {
+                    "type": "range",
+                    "id": "image_size",
+                    "min": 200,
+                    "max": 2000,
+                    "step": 100,
+                    "unit": "px",
+                    "label": "Image size",
+                    "default": 900
+                },
+                {
+                    "type": "checkbox",
+                    "id": "format_pjpg",
+                    "label": "Enable format 'pjpg'",
+                    "info": "Don't work with transparent images",
+                    "default": true
+                },
+                {
+                    "type": "checkbox",
+                    "id": "disable_lazyload",
+                    "label": "Disable lazy load",
+                    "default": false
+                },
+                {
+                    "type": "text",
+                    "id": "video_mp4_url",
+                    "label": "Video Url",
+                    "info": "Video type is \"mp4\""
+                },
+                {
+                    "type": "video_url",
+                    "id": "video_external_url",
+                    "label": "Youtube or Vimeo video URL",
+                    "accept": ["youtube", "vimeo"]
+                },
+                {
+                    "type": "checkbox",
+                    "id": "video_autoplay",
+                    "label": "Autoplay",
+                    "default": true
+                },
+                {
+                    "type": "checkbox",
+                    "id": "video_controls",
+                    "label": "Controls",
+                    "default": false
+                },
+                {
+                    "type": "url",
+                    "id": "url",
+                    "label": "Url"
+                },
+                {
+                    "type": "text",
+                    "id": "text_line_1",
+                    "label": "Text line 1",
+                    "default": "Text line 1"
+                },
+                {
+                    "type": "text",
+                    "id": "text_line_2",
+                    "label": "Text line 2",
+                    "default": "Text line 2"
+                },
+                {
+                    "type": "text",
+                    "id": "text_line_3",
+                    "label": "Text line 3",
+                    "default": "Text line 3"
+                },
+                {
+                    "type": "text",
+                    "id": "button_text",
+                    "label": "Button text",
+                    "default": "Button text"
+                },
+                {
+                    "type": "link_list",
+                    "id": "menu",
+                    "label": "Menu"
+                },
+                {
+                    "type": "textarea",
+                    "id": "custom_html",
+                    "label": "Custom HTML"
+                },
+                {
+                    "type": "checkbox",
+                    "id": "text_bg",
+                    "label": "Enable text background"
+                },
+                {
+                    "type": "text",
+                    "id": "text_bg_size",
+                    "label": "Text background size (width|height)",
+                    "info": "Example: 600px|300px",
+                    "default": "600px|300px"
+                },
+                {
+                    "type": "text",
+                    "id": "text_bg_mt",
+                    "label": "Text background margin top",
+                    "info": "Example: -10px, 10px",
+                    "default": "0px"
+                },
+                {
+                    "type": "range",
+                    "id": "text_bg_opacity",
+                    "min": 0.1,
+                    "max": 1,
+                    "step": 0.1,
+                    "label": "Text background opacity",
+                    "default": 0.8
+                },
+                {
+                    "type": "checkbox",
+                    "id": "text_bg_disable_mobile",
+                    "label": "Text background disable in mobile"
+                },
+                {
+                    "type": "header",
+                    "content": "Animation"
+                },
+                {
+                    "type": "range",
+                    "id": "parallax",
+                    "min": 0,
+                    "max": 20,
+                    "step": 1,
+                    "label": "Parallax of image",
+                    "default": 0,
+                    "info": "Priority over animations"
+                },
+                {
+                    "type": "select",
+                    "id": "animation_from",
+                    "label": "From",
+                    "default": "default",
+                    "options": [
+                        {
+                            "value": "default",
+                            "label": "Default"
+                        },
+                        {
+                            "value": "center",
+                            "label": "Center"
+                        },
+                        {
+                            "value": "top-left",
+                            "label": "Top left"
+                        },
+                        {
+                            "value": "top",
+                            "label": "Top"
+                        },
+                        {
+                            "value": "top-right",
+                            "label": "Top right"
+                        },
+                        {
+                            "value": "right",
+                            "label": "Right"
+                        },
+                        {
+                            "value": "bottom-right",
+                            "label": "Bottom right"
+                        },
+                        {
+                            "value": "bottom",
+                            "label": "Bottom"
+                        },
+                        {
+                            "value": "bottom-left",
+                            "label": "Bottom left"
+                        },
+                        {
+                            "value": "left",
+                            "label": "Left"
+                        }
+                    ]
+                },
+                {
+                    "type": "select",
+                    "id": "animation_to",
+                    "label": "To",
+                    "default": "center",
+                    "options": [
+                        {
+                            "value": "default",
+                            "label": "Default"
+                        },
+                        {
+                            "value": "center",
+                            "label": "Center"
+                        },
+                        {
+                            "value": "top-left",
+                            "label": "Top left"
+                        },
+                        {
+                            "value": "top",
+                            "label": "Top"
+                        },
+                        {
+                            "value": "top-right",
+                            "label": "Top right"
+                        },
+                        {
+                            "value": "right",
+                            "label": "Right"
+                        },
+                        {
+                            "value": "bottom-right",
+                            "label": "Bottom right"
+                        },
+                        {
+                            "value": "bottom",
+                            "label": "Bottom"
+                        },
+                        {
+                            "value": "bottom-left",
+                            "label": "Bottom left"
+                        },
+                        {
+                            "value": "left",
+                            "label": "Left"
+                        }
+                    ]
+                },
+                {
+                    "type": "checkbox",
+                    "id": "animation_from_opacity",
+                    "label": "From opacity",
+                    "default": false
+                },
+                {
+                    "type": "checkbox",
+                    "id": "animation_to_opacity",
+                    "label": "To opacity",
+                    "default": true
+                },
+                {
+                    "type": "select",
+                    "id": "animation_text",
+                    "label": "Animation text",
+                    "default": "none",
+                    "options": [
+                        {
+                            "value": "none",
+                            "label": "None"
+                        },
+                        {
+                            "value": "scale-in",
+                            "label": "Scale In"
+                        },
+                        {
+                            "value": "scale-out",
+                            "label": "Scale Out"
+                        },
+                        {
+                            "value": "translate-top",
+                            "label": "Translate Top"
+                        },
+                        {
+                            "value": "translate-bottom",
+                            "label": "Translate Bottom"
+                        },
+                        {
+                            "value": "translate-left",
+                            "label": "Translate Left"
+                        },
+                        {
+                            "value": "translate-right",
+                            "label": "Translate Right"
+                        }
+                    ]
+                },
+                {
+                    "type": "header",
+                    "content": "Colors"
+                },
+                {
+                    "type": "color",
+                    "id": "color_text_line_1",
+                    "label": "Text line 1"
+                },
+                {
+                    "type": "color",
+                    "id": "color_text_line_2",
+                    "label": "Text line 2"
+                },
+                {
+                    "type": "color",
+                    "id": "color_text_line_3",
+                    "label": "Text line 3"
+                },
+                {
+                    "type": "select",
+                    "id": "color_button_type",
+                    "label": "Button",
+                    "default": "3",
+                    "options": [
+                        {
+                            "value": "1",
+                            "label": "Type #1 (default)"
+                        },
+                        {
+                            "value": "2",
+                            "label": "Type #2 (invert)"
+                        },
+                        {
+                            "value": "3",
+                            "label": "Type #3 (secondary)"
+                        }
+                    ]
+                },
+                {
+                    "type": "color",
+                    "id": "color_text_bg",
+                    "label": "Text background"
+                }
+            ]
+        },
+        {
+            "type": "products",
+            "name": "Products",
+            "settings": [
+                {
+                    "type": "header",
+                    "content": "Grid"
+                },
+                {
+                    "type": "range",
+                    "id": "grid",
+                    "min": 1,
+                    "max": 12,
+                    "step": 1,
+                    "unit": "/12",
+                    "label": "Size",
+                    "default": 12
+                },
+                {
+                    "type": "text",
+                    "id": "grid_responsive",
+                    "label": "Responsive size",
+                    "info": "Example is '12,12,12,12,12', 1 < value < 12"
+                },
+                {
+                    "type": "range",
+                    "id": "margin_top",
+                    "min": 0,
+                    "max": 100,
+                    "step": 5,
+                    "unit": "px",
+                    "label": "Margin top",
+                    "default": 0
+                },
+                {
+                    "type": "text",
+                    "id": "margin_top_responsive",
+                    "label": "Responsive margin top",
+                    "info": "Example is '0,0,0,0,0'"
+                },
+                {
+                    "type": "range",
+                    "id": "margin_bottom",
+                    "min": 0,
+                    "max": 100,
+                    "step": 5,
+                    "unit": "px",
+                    "label": "Margin bottom",
+                    "default": 15
+                },
+                {
+                    "type": "text",
+                    "id": "margin_bottom_responsive",
+                    "label": "Responsive margin bottom",
+                    "info": "Example is '0,0,0,0,0'"
+                },
+                {
+                    "type": "header",
+                    "content": "Settings"
+                },
+                {
+                    "type": "textarea",
+                    "id": "title",
+                    "label": "Title"
+                },
+                {
+                    "type": "collection",
+                    "id": "collection",
+                    "label": "Collection"
+                },
+                {
+                    "type": "range",
+                    "id": "max_products",
+                    "min": 1,
+                    "max": 6,
+                    "step": 1,
+                    "label": "Maximum products in column",
+                    "default": 3
+                },
+                {
+                    "type": "checkbox",
+                    "id": "disable_lazyload",
+                    "label": "Disable lazy load",
+                    "default": false
+                }
+            ]
+        },
+        {
+            "type": "custom_html",
+            "name": "Custom HTML",
+            "settings": [
+                {
+                    "type": "header",
+                    "content": "Grid"
+                },
+                {
+                    "type": "range",
+                    "id": "grid",
+                    "min": 1,
+                    "max": 12,
+                    "step": 1,
+                    "unit": "/12",
+                    "label": "Size",
+                    "default": 12
+                },
+                {
+                    "type": "text",
+                    "id": "grid_responsive",
+                    "label": "Responsive size",
+                    "info": "Example is '12,12,12,12,12', 1 < value < 12"
+                },
+                {
+                    "type": "range",
+                    "id": "margin_top",
+                    "min": 0,
+                    "max": 100,
+                    "step": 5,
+                    "unit": "px",
+                    "label": "Margin top",
+                    "default": 0
+                },
+                {
+                    "type": "text",
+                    "id": "margin_top_responsive",
+                    "label": "Responsive margin top",
+                    "info": "Example is '0,0,0,0,0'"
+                },
+                {
+                    "type": "range",
+                    "id": "margin_bottom",
+                    "min": 0,
+                    "max": 100,
+                    "step": 5,
+                    "unit": "px",
+                    "label": "Margin bottom",
+                    "default": 15
+                },
+                {
+                    "type": "text",
+                    "id": "margin_bottom_responsive",
+                    "label": "Responsive margin bottom",
+                    "info": "Example is '0,0,0,0,0'"
+                },
+                {
+                    "type": "header",
+                    "content": "Settings"
+                },
+                {
+                    "type": "textarea",
+                    "id": "html",
+                    "label": "HTML",
+                    "default": "<p>Custom HTML text</p>"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Builder",
+            "category": "4) Builder (Slider Revolution, promobox, instagram, custom HTML)"
+        }
+    ]
+}
+{% endschema %}

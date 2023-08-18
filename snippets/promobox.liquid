@@ -1,0 +1,297 @@
+{%- assign responsive_height = responsive_height | default: block.settings.responsive_height -%}
+{%- assign min_height = min_height | default: block.settings.min_height -%}
+{%- assign prm_type = prm_type | default: block.settings.type -%}
+{%- assign prm_image = prm_image | default: block.settings.image -%}
+{%- assign prm_image_format_pjpg = prm_image_format_pjpg | default: block.settings.format_pjpg -%}
+{%- assign video_mp4_url = video_mp4_url | default: block.settings.video_mp4_url -%}
+{%- assign video_external_url = video_external_url | default: block.settings.video_external_url -%}
+{%- assign video_autoplay = video_autoplay | default: block.settings.video_autoplay -%}
+{%- assign video_controls = video_controls | default: block.settings.video_controls -%}
+{%- assign prm_url = prm_url | default:  block.settings.url -%}
+{%- assign text_line_1 = text_line_1 | default: block.settings.text_line_1 -%}
+{%- assign text_line_2 = text_line_2 | default: block.settings.text_line_2 -%}
+{%- assign text_line_3 = text_line_3 | default: block.settings.text_line_3 -%}
+{%- assign button_text = button_text | default: block.settings.button_text -%}
+{%- assign prm_menu = prm_menu | default: block.settings.menu -%}
+{%- assign text_bg = text_bg | default: block.settings.text_bg -%}
+{%- assign text_bg_size = text_bg_size | default: block.settings.text_bg_size -%}
+{%- assign text_bg_mt = text_bg_mt | default: block.settings.text_bg_mt -%}
+{%- assign text_bg_opacity = text_bg_opacity | default: block.settings.text_bg_opacity -%}
+{%- assign text_bg_disable_mobile = text_bg_disable_mobile | default: block.settings.text_bg_disable_mobile -%}
+{%- assign disable_lazyload = disable_lazyload | default: block.settings.disable_lazyload -%}
+{%- assign parallax = parallax | default: block.settings.parallax -%}
+{%- assign animation_from = animation_from | default: block.settings.animation_from | default: 'default' -%}
+{%- assign animation_to = animation_to | default: block.settings.animation_to | default: 'default' -%}
+{%- assign animation_from_opacity = animation_from_opacity | default: block.settings.animation_from_opacity -%}
+{%- assign animation_to_opacity = animation_to_opacity | default: block.settings.animation_to_opacity -%}
+{%- assign animation_text = animation_text | default: block.settings.animation_text -%}
+{%- assign color_text_line_1 = color_text_line_1 | default: block.settings.color_text_line_1 -%}
+{%- assign text_line_1_uppercase = text_line_1_uppercase | default: block.settings.text_line_1_uppercase -%}
+{%- assign color_text_line_2 = color_text_line_2 | default: block.settings.color_text_line_2 -%}
+{%- assign color_text_line_3 = color_text_line_3 | default: block.settings.color_text_line_3 -%}
+{%- assign color_text_bg = color_text_bg | default: block.settings.color_text_bg -%}
+{%- assign custom_html = custom_html | default: block.settings.custom_html -%}
+{%- assign prm_position_h = prm_position_h | default: block.settings.position_h -%}
+{%- assign prm_position_v = prm_position_h | default: block.settings.position_v -%}
+{%- assign prm_offset_h = prm_offset_h | default: block.settings.offset_h -%}
+{%- assign prm_offset_v = prm_offset_v | default: block.settings.offset_v -%}
+{%- assign prm_offset_reverse_h = prm_offset_reverse_h | default: block.settings.offset_reverse_h -%}
+{%- assign prm_offset_reverse_v = prm_offset_reverse_v | default: block.settings.offset_reverse_v -%}
+{%- assign prm_align = align | default: block.settings.align -%}
+{%- assign prm_width = width | default: block.settings.width -%}
+{%- assign color_button_type = color_button_type | default: block.settings.color_button_type -%}
+{%- capture prm_image_size -%}{{ prm_image_size | default: block.settings.image_size }}x{%- endcapture -%}
+{% capture link_begin_tag %}{% if prm_url %}a href="{{ prm_url }}"{% else %}div{% endif %}{% endcapture %}
+{% capture link_end_tag %}{% if prm_url %}a{% else %}div{% endif %}{% endcapture %}
+{% capture style_text_line_1 %}{% if color_text_line_1 != blank and color_text_line_1 != 'rgba(0,0,0,0)' %} style="color: {{ color_text_line_1 }};"{% endif %}{% endcapture %}
+{% capture style_text_line_2 %}{% if color_text_line_2 != blank and color_text_line_2 != 'rgba(0,0,0,0)' %} style="color: {{ color_text_line_2 }};"{% endif %}{% endcapture %}
+{% capture style_text_line_3 %}{% if color_text_line_3 != blank and color_text_line_3 != 'rgba(0,0,0,0)' %} style="color: {{ color_text_line_3 }};"{% endif %}{% endcapture %}
+{% capture class_button %}{% if color_button_type == '2' %} btn--invert{% elsif color_button_type == '3' %} btn--secondary{% endif %}{% endcapture %}
+{%- if text_bg_size -%}
+    {%- assign text_bg_size = text_bg_size | split: '|' -%}
+{%- endif -%}
+
+{% capture prm_bg %}
+    {%- if video_mp4_url != blank -%}
+        {%- if responsive_height -%}
+            {% include 'rvideo' with video: video_mp4_url poster: prm_image poster_size: prm_image_size %}
+        {%- else -%}
+            <video muted playsinline preload="none"{% if video_controls %} controls{% endif %}{% if video_autoplay %} autoplay loop{% endif %}{% if prm_image != blank %} poster="{{ prm_image | img_url: prm_image_size }}"{% endif %} preload="auto" class="{% if responsive_height %}rimage__video{% endif %} w-100">
+                <source src="{{ video_mp4_url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        {%- endif -%}
+    {%- elsif video_external_url != blank -%}
+        <div class="embed-responsive embed-responsive-16by9">
+            {%- if video_external_url.type == 'youtube' -%}
+                <iframe src="https://www.youtube.com/embed/{{ video_external_url.id }}?rel=0&amp;controls=0&amp;showinfo=0{% if video_autoplay %}&amp;autoplay=1&amp;loop=1{% endif %}" frameborder="0" allow="autoplay; encrypted-media" webkitallowfullscreen mozallowfullscreen allowfullscreen class="embed-responsive-item"></iframe>
+            {%- elsif video_external_url.type == 'vimeo' -%}
+                <iframe src="https://player.vimeo.com/video/{{ video_external_url.id }}?color=ffffff&amp;title=0&amp;byline=0{% if video_autoplay %}&amp;autoplay=1&amp;loop=1{% endif %}" frameborder="0" allow="autoplay; encrypted-media" webkitallowfullscreen mozallowfullscreen allowfullscreen class="embed-responsive-item"></iframe>
+            {%- endif -%}
+        </div>
+    {%- else -%}
+        <div class="image-animation image-animation--from-{{ animation_from }} image-animation--to-{{ animation_to }}{% if animation_from_opacity %} image-animation--from-opacity{% endif %}{% if animation_to_opacity %} image-animation--to-opacity{% endif %}">
+            {%- if animation_from != 'default' or animation_to != 'default' -%}
+                {%- assign scale_perspective = 1.1 -%}
+            {%- else -%}
+                {%- assign scale_perspective = null -%}
+            {%- endif -%}
+            {%- if prm_image_format_pjpg -%}
+                {% include 'rimage' with image: prm_image size: prm_image_size format: 'pjpg' scale_perspective: scale_perspective %}
+            {%- else -%}
+                {% include 'rimage' with image: prm_image size: prm_image_size scale_perspective: scale_perspective %}
+            {%- endif -%}
+        </div>
+    {%- endif -%}
+{% endcapture %}
+
+{%- if parallax > 0 -%}
+    {% capture prm_bg %}
+        <div class="js-parallax" data-ratio="{{ parallax | divided_by: 10.0 | plus: 1 }}"{% if responsive_height != blank %} data-height="{{ responsive_height }}"{% endif %}{% if min_height != blank %} data-min-height="{{ min_height }}"{% endif %}>
+            <div>
+                {{ prm_bg }}
+            </div>
+        </div>
+        <script>
+            Loader.require({type: "script", name: "parallax"});
+        </script>
+    {% endcapture %}
+{%- endif -%}
+
+{%- case prm_type -%}
+{%- when '1' -%}
+    <div class="promobox promobox--type-01 d-flex flex-column align-items-center text-center">
+        <{{ link_begin_tag }} class="w-100">
+            {{ prm_bg }}
+        </{{ link_end_tag }}>
+        {%- if custom_html != blank -%}
+            {% include 'content-load-template' content: custom_html %}
+        {%- else -%}
+            {%- if text_line_1 != blank -%}
+                <{{ link_begin_tag }} class="promobox__text-line-01 mt-15"><p class="h5 mb-0{% if text_line_1_uppercase %} text-uppercase{% endif %}"{{ style_text_line_1 }}>{{ text_line_1 }}</p></{{ link_end_tag }}>
+            {%- endif -%}
+            {%- if text_line_2 != blank -%}
+                <{{ link_begin_tag }}><p class="promobox__text-line-02 m-0"{{ style_text_line_2 }}>{{ text_line_2 }}</p></{{ link_end_tag }}>
+            {%- endif -%}
+        {%- endif -%}
+    </div>
+{%- when '2' -%}
+    <div class="promobox promobox--type-02 position-relative d-flex flex-column align-items-center text-center">
+        <div class="w-100">
+            <{{ link_begin_tag }} class="w-100">
+                {{ prm_bg }}
+            </{{ link_end_tag }}>
+            <div class="promobox__plate position-absolute d-flex flex-column flex-center px-10 py-7 pointer-events-none">
+                {%- if custom_html != blank -%}
+                    {% include 'content-load-template' content: custom_html %}
+                {%- else -%}
+                    {%- if text_line_1 != blank -%}
+                        <p class="promobox__text-line-01 h5 position-relative m-0{% if text_line_1_uppercase %} text-uppercase{% endif %}"{{ style_text_line_1 }}>{{ text_line_1 }}</p>
+                    {%- endif -%}
+                    {%- if text_line_2 != blank -%}
+                        <p class="promobox__text-line-02 position-relative m-0"{{ style_text_line_2 }}>{{ text_line_2 }}</p>
+                    {%- endif -%}
+                {%- endif -%}
+            </div>
+        </div>
+    </div>
+{%- when '3' -%}
+    <div class="promobox promobox--type-03 d-flex justify-content-center">
+        <{{ link_begin_tag }} class="image-animation-trigger position-relative w-100">
+            {{ prm_bg }}
+            {%- if prm_url -%}
+                <div class="promobox__border absolute-stretch"></div>
+            {%- endif -%}
+        </{{ link_end_tag }}>
+    </div>
+{%- when '4' -%}
+    <div class="promobox promobox--type-04 position-relative d-flex flex-column align-items-center text-center">
+        <div class="image-animation-trigger w-100">
+            <{{ link_begin_tag }} class="w-100">
+                {{ prm_bg }}
+            </{{ link_end_tag }}>
+            <div class="promobox__content absolute-stretch d-flex flex-column flex-center px-15 py-7 overflow-hidden pointer-events-none">
+                {%- if custom_html != blank -%}
+                    {% include 'content-load-template' content: custom_html %}
+                {%- else -%}
+                    {%- if text_line_1 != blank -%}
+                        <p class="promobox__text-line-01 h5 mb-5{% if text_line_1_uppercase %} text-uppercase{% endif %}"{{ style_text_line_1 }}>{{ text_line_1 }}</p>
+                    {%- endif -%}
+                    {%- if text_line_2 != blank -%}
+                        <p class="promobox__text-line-02 h2 mt-5 mb-0"{{ style_text_line_2 }}>{{ text_line_2 }}</p>
+                    {%- endif -%}
+                    {%- if text_line_3 != blank -%}
+                        <p class="promobox__text-line-03 h6 mt-10 mb-0"{{ style_text_line_3 }}>{{ text_line_3 }}</p>
+                    {%- endif -%}
+                    {%- if button_text != blank -%}
+                        <{{ link_begin_tag }}  class="promobox__btn btn px-20 mt-25 pointer-events-all{{ class_button }}">{{ button_text }}</{{ link_end_tag }}>
+                    {%- endif -%}
+                {%- endif -%}
+            </div>
+        </div>
+    </div>
+{%- when '5' -%}
+    <div class="promobox promobox--type-05 image-animation-trigger position-relative d-flex flex-column align-items-center text-center">
+        <{{ link_begin_tag }} class="w-100">
+            {{ prm_bg }}
+        </{{ link_end_tag }}>
+        <div class="promobox__plate promobox__plate--hovered position-absolute d-flex flex-column flex-center px-10 py-7 pointer-events-none">
+            {%- if custom_html != blank -%}
+                {% include 'content-load-template' content: custom_html %}
+            {%- else -%}
+                {%- if text_line_1 != blank -%}
+                    <{{ link_begin_tag }} class="pointer-events-all">
+                        <p class="promobox__text-line-01 h5 position-relative m-0{% if text_line_1_uppercase %} text-uppercase{% endif %}"{{ style_text_line_1 }}>{{ text_line_1 }}</p>
+                    </{{ link_end_tag }}>
+                {%- endif -%}
+            {%- endif -%}
+        </div>
+        <div class="promobox__content-scale position-absolute d-none d-lg-flex flex-column flex-center px-15 py-7 pointer-events-none">
+            {%- if custom_html != blank -%}
+                {% include 'content-load-template' content: custom_html %}
+            {%- else -%}
+                {%- if text_line_1 != blank -%}
+                    <{{ link_begin_tag }} class="pointer-events-all">
+                        <p class="promobox__text-line-01 h5 position-relative m-0{% if text_line_1_uppercase %} text-uppercase{% endif %}"{{ style_text_line_1 }}>{{ text_line_1 }}</p>
+                    </{{ link_end_tag }}>
+                {%- endif -%}
+                {%- if linklists[prm_menu].links.size > 0 -%}
+                    <ul class="promobox__list list-unstyled position-relative mt-5 overflow-hidden pointer-events-all">
+                        {%- for link in linklists[prm_menu].links -%}
+                            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                        {%- endfor -%}
+                    </ul>
+                {%- endif -%}
+            {%- endif -%}
+        </div>
+    </div>
+{%- when '6' -%}
+    <div class="promobox promobox--type-06 d-flex flex-column align-items-center text-center">
+        <{{ link_begin_tag }} class="w-100">
+            {{ prm_bg }}
+        </{{ link_end_tag }}>
+        {%- if text_line_1 != blank -%}
+            <{{ link_begin_tag }} class="promobox__text-line-01 h3 mt-15 mb-0{% if text_line_1_uppercase %} text-uppercase{% endif %}"{{ style_text_line_1 }}>{{ text_line_1 }}</{{ link_end_tag }}>
+        {%- endif -%}
+        {%- if custom_html != blank -%}
+            {% include 'content-load-template' content: custom_html %}
+        {%- else -%}
+            {%- if text_line_2 != blank -%}
+                <p class="promobox__text-line-02 mt-5 mb-7"{{ style_text_line_2 }}>{{ text_line_2 }}</p>
+            {%- endif -%}
+            {%- if button_text != blank -%}
+                <{{ link_begin_tag }} class="promobox__btn btn mt-10{{ class_button }}">{{ button_text }}</{{ link_end_tag }}>
+            {%- endif -%}
+        {%- endif -%}
+    </div>
+{%- when '7' -%}
+    <div class="promobox promobox--type-07{% if is_slider %} promobox--is-slider{% endif %} position-relative d-flex flex-column align-items-center text-center overflow-hidden">
+        <div class="image-animation-trigger w-100">
+            <{{ link_begin_tag }} class="w-100">
+                {{ prm_bg }}
+            </{{ link_end_tag }}>
+            <div class="promobox__content{% if animation_text and animation_text != 'none' %} promobox__content--animation-{{ animation_text }}{% endif %} absolute-stretch d-flex flex-column flex-center overflow-hidden">
+                {%- if text_bg -%}
+                    <div class="promobox__text-bg position-absolute pointer-events-none{% if text_bg_disable_mobile %} d-none d-lg-block{% endif %}" style="{% if text_bg_size != blank %}width: {{ text_bg_size[0] }}; height: {{ text_bg_size[1] }};{% endif %}{% if text_bg_mt %} margin-top: {{ text_bg_mt }};{% endif %}{% if color_text_bg != blank %} background-color: {{ color_text_bg }};{% endif %}{% if text_bg_opacity %} opacity: {{ text_bg_opacity }};{% endif %}"></div>
+                {%- endif -%}
+                <div class="promobox__content_inner position-absolute d-flex flex-column flex-center w-100 px-15 py-7" style="{% if prm_width %}max-width: {{ prm_width }}px;{% endif %}{% if prm_position_v == 'top' %}top: 0;{% elsif prm_position_v == 'bottom' %}bottom: 0;{% endif %}{% if prm_position_h == 'left' %}left: 0;{% elsif prm_position_h == 'right' %}right: 0;{% endif %}{% if prm_offset_h > 0 %}margin-left: {% if prm_offset_reverse_h %}-{% endif %}{{ prm_offset_h }}px;{% endif %}{% if prm_offset_v > 0 %}margin-top: {% if prm_offset_reverse_v %}-{% endif %}{{ prm_offset_v }}px;{% endif %}">
+                    {%- if custom_html != blank -%}
+                        {% include 'content-load-template' content: custom_html %}
+                    {%- else -%}
+                        {%- if text_line_1 != blank -%}
+                            <p class="promobox__text-line-01 h1 mb-0{% if text_line_1_uppercase %} text-uppercase{% endif %}"{{ style_text_line_1 }}>{{ text_line_1 }}</p>
+                        {%- endif -%}
+                        {%- if text_line_2 != blank -%}
+                            <p class="promobox__text-line-02 h4 mt-25 mb-0"{{ style_text_line_2 }}>{{ text_line_2 }}</p>
+                        {%- endif -%}
+                        {%- if button_text != blank -%}
+                            <{{ link_begin_tag }} class="promobox__btn btn px-20 mt-35 pointer-events-all{{ class_button }}">{{ button_text }}</{{ link_end_tag }}>
+                        {%- endif -%}
+                    {%- endif -%}
+                </div>
+            </div>
+        </div>
+    </div>
+{%- endcase -%}
+{%- assign responsive_height = null -%}
+{%- assign min_height = null -%}
+{%- assign prm_type = null -%}
+{%- assign prm_image = null -%}
+{%- assign prm_image_format_pjpg = null -%}
+{%- assign video_mp4_url = null -%}
+{%- assign video_external_url = null -%}
+{%- assign prm_url = null -%}
+{%- assign text_line_1 = null -%}
+{%- assign text_line_1_uppercase = null -%}
+{%- assign text_line_2 = null -%}
+{%- assign text_line_3 = null -%}
+{%- assign custom_html = null -%}
+{%- assign text_bg = null -%}
+{%- assign text_bg_size = null -%}
+{%- assign text_bg_mt = null -%}
+{%- assign text_bg_opacity = null -%}
+{%- assign text_bg_disable_mobile = null -%}
+{%- assign prm_position_h = null -%}
+{%- assign prm_position_v = null -%}
+{%- assign prm_offset_h = null -%}
+{%- assign prm_offset_v = null -%}
+{%- assign prm_offset_reverse_h = null -%}
+{%- assign prm_offset_reverse_v = null -%}
+{%- assign prm_align = null -%}
+{%- assign prm_width = null -%}
+{%- assign button_text = null -%}
+{%- assign prm_menu = null -%}
+{%- assign parallax = null -%}
+{%- assign is_slider = null -%}
+{%- assign animation_from = null -%}
+{%- assign animation_to = null -%}
+{%- assign animation_from_opacity = null -%}
+{%- assign animation_to_opacity = null -%}
+{%- assign animation_text = null -%}
+{%- assign color_text_line_1 = null -%}
+{%- assign color_text_line_2 = null -%}
+{%- assign color_text_line_3 = null -%}
+{%- assign color_button_type = null -%}
+{%- assign color_text_bg = null -%}
+{%- assign prm_image_size = null -%}
+{%- assign disable_lazyload = null -%}

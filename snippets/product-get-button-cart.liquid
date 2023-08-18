@@ -1,0 +1,10 @@
+<{% if settings.buttons_animation_icon_enable %}a href="{{ url }}"{% else %}button type="submit"{% endif %} class="btn btn--status{% if settings.buttons_animation_icon_enable %} btn--animated{% endif %}{% if settings.product_ajax_cart and enable_select_options_button != true %} js-product-button-add-to-cart{% endif %}" name="add" data-js-product-button-add-to-cart{% unless current_variant.available %} disabled="disabled" data-button-status="sold-out"{% endunless %}>
+    {%- if enable_select_options_button -%}
+        <span class="d-flex flex-center"><i class="btn__icon mr-5 mb-4">{% include 'icon-theme-109' %}</i><span class="btn__text">{{ 'products.product.add_to_cart.select_options' | t }}</span></span>
+    {%- else -%}
+        <span class="d-flex flex-center"><i class="btn__icon mr-5 mb-4">{% include 'icon-theme-109' %}</i><span class="btn__text">{{ 'products.product.add_to_cart.title' | t }}</span></span>
+        <span class="d-flex flex-center" data-button-content="added"><i class="mr-5 mb-4">{% include 'icon-theme-110' %}</i>{{ 'products.product.add_to_cart.added' | t }}</span>
+    {%- endif -%}
+    <span class="d-flex flex-center" data-button-content="sold-out">{{ 'products.product.add_to_cart.sold_out' | t }}</span>
+</{% if settings.buttons_animation_icon_enable %}a{% else %}button{% endif %}>
+{%- assign enable_select_options_button = false -%}

@@ -1,0 +1,71 @@
+<!doctype html>
+<!--[if IE 9]> <html class="ie9 no-js supports-no-cookies" lang="{{ shop.locale }}"{% if settings.layout_enable_rtl %} dir="rtl"{% endif %}> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js supports-no-cookies" lang="{{ shop.locale }}"{% if settings.layout_enable_rtl %} dir="rtl"{% endif %}> <!--<![endif]-->
+{% capture document %}
+<head>
+  {% include 'head' %}
+  {% capture get_content_for_header %}
+    {% include 'buddha-megamenu-before' %}
+  
+  {{ content_for_header }}
+  {% endcapture %}
+  {%- if settings.layout_include_weglot_app -%}
+    {% capture weglot_includes %}
+    {% include 'weglot_hreftags' %}
+    {% include 'weglot_switcher' %}
+    {% endcapture %}
+  {%- endif -%}
+
+  
+  <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-KRJS46D');</script>
+<!-- End Google Tag Manager -->
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-144176092-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-144176092-1');
+</script>
+
+  {% render 'shogun-head' %}
+</head>
+<body{% include 'layout-get-body-attributes' %}>
+  <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KRJS46D"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+  {% include 'buddha-megamenu-wireframe' %}
+{%- if settings.layout_enable_preloader -%}
+  {% include 'layout-get-preloader' with is_fixed: true %}
+{%- endif -%}
+{% section 'global-settings' %}
+{% section 'header' %}
+<main id="MainContent">
+  {{ content_for_layout }}
+</main>
+{% section 'footer' %}
+{% section 'popup' %}
+{% section 'footbar' %}
+{% include 'fixed-sidebar' %}
+{% include 'templates' %}
+{% include 'layout-get-includes' %}
+{% include 'layout-get-version' %}
+{% endcapture %}
+{{ document | replace: '   ', ' ' | replace: '  ', ' ' }}
+{% capture get_content_for_header %}
+{%- if settings.dev_enable_content_for_header -%}
+  {{ get_content_for_header }}
+{%- endif -%}
+{{ weglot_includes }}
+{% endcapture %}
+{{ get_content_for_header | replace: '   ', ' ' | replace: '  ', ' ' }}
+</body>
+</html>
+

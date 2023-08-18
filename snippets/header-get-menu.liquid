@@ -1,0 +1,32 @@
+{%- if section.settings.menu -%}
+    <nav class="menu js-menu js-position" data-js-position-name="menu">
+        <div class="menu__panel menu__list menu__level-01 d-flex flex-column flex-lg-row flex-lg-wrap{% if menu_offset %} menu__panel--bordered{% endif %}">
+            <div class="menu__curtain d-none position-lg-absolute"></div>
+            {%- assign menu = linklists[section.settings.menu] -%}
+            {%- for link in menu.links -%}
+                {%- capture childrens -%}
+                    {%- assign megamenu = null -%}
+                    {%- for block in section.blocks -%}
+                        {%- if block.type == 'megamenu' -%}
+                            {%- assign for_item_handle = block.settings.for_item | handle -%}
+                            {%- if for_item_handle == link.handle -%}
+                                {%- assign megamenu = block.settings -%}
+                                {% include 'header-get-menu-megamenu' %}
+                            {%- endif -%}
+                        {%- endif -%}
+                    {%- endfor -%}
+                    {%- if megamenu == null -%}
+                        {% include 'header-get-menu-dropdown' %}
+                    {%- endif -%}
+                {% endcapture %}
+                <div class="menu__item {% if link.levels > 0 %}menu__item--has-children{% if megamenu == null %} position-lg-relative{% endif %}{% endif %}">
+                    {% include 'header-res-menu-labels' with link: link %}
+                    <a href="{{ link.url }}" class="d-flex align-items-center px-lg-7"><span>{{ link.title }}</span>{{ labels }}{% if link.levels > 0 or megamenu != null %} <i class="d-none d-lg-inline position-lg-relative">{% include 'icon-theme-229' %}</i>{% if link.levels > 0 %}<i class="d-lg-none ml-auto">{% include 'icon-theme-231' %}</i>{% endif %}{% endif %}</a>
+                    {%- if link.levels > 0 or megamenu != null -%}
+                        {{ childrens }}
+                    {%- endif -%}
+                </div>
+            {%- endfor -%}
+        </div>
+    </nav>
+{%- endif -%}

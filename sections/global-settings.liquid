@@ -1,0 +1,121 @@
+{%- if section.blocks.size > 0 -%}
+    {%- if settings.layout_images_lazyload == false -%}
+        {%- assign disable_lazyload = true -%}
+    {%- endif -%}
+    <style>
+        {%- for block in section.blocks -%}
+            {%- if block.type == 'product_option_setting' and block.settings.property != blank and block.settings.value != blank -%}
+                {%- assign assign_to_product = false -%}
+                {%- if block.settings.assign_to == 'all' or block.settings.assign_to == 'products' -%}
+                    {%- assign assign_to_product = true -%}
+                    {% if block.settings.product != blank %}[data-product-handle="{{ block.settings.product }}"] {% endif %}.product-options__section[data-property="{{ block.settings.property | handleize }}"] [data-value="{{ block.settings.value | handleize }}"]
+                {%- endif -%}
+                {%- if block.settings.product == blank -%}
+                    {%- if block.settings.assign_to == 'all' or block.settings.assign_to == 'filters' -%}
+                        {% if assign_to_product %},{% endif %}.collection-filters[data-property="color"] [data-value="{{ block.settings.value | handleize }}"]
+                    {%- endif -%}
+                {%- endif -%}
+                    {
+                        {%- if block.settings.color != blank -%}
+                            background-color: {{ block.settings.color }} !important;
+                        {%- elsif block.settings.disable_default_color -%}
+                            background-color: transparent !important;
+                        {%- endif -%}
+                    }
+                {%- assign assign_to_product = false -%}
+                {%- if block.settings.assign_to == 'all' or block.settings.assign_to == 'products' -%}
+                    {%- assign assign_to_product = true -%}
+                    {% if block.settings.product != blank %}[data-product-handle="{{ block.settings.product }}"] {% endif %}.product-options__section[data-property="{{ block.settings.property | handleize }}"] [data-value="{{ block.settings.value | handleize }}"]{% unless disable_lazyload %}[data-was-processed]{% endunless %}
+                {%- endif -%}
+                {%- if block.settings.product == blank -%}
+                    {%- if block.settings.assign_to == 'all' or block.settings.assign_to == 'filters' -%}
+                        {% if assign_to_product %},{% endif %}.collection-filters[data-property="color"] [data-value="{{ block.settings.value | handleize }}"]{% unless disable_lazyload %}[data-was-processed]{% endunless %}
+                    {%- endif -%}
+                {%- endif -%}
+                    {
+                        {%- if block.settings.image != blank -%}
+                            background-image: url({{ block.settings.image | img_url: '92x', format: 'pjpg' }}) !important;
+                        {%- elsif block.settings.disable_default_image -%}
+                            background-image: none !important;
+                        {%- endif -%}
+                    }
+            {%- endif -%}
+        {%- endfor -%}
+    </style>
+{%- endif -%}
+
+
+{% schema %}
+{
+"name": "Global settings",
+"settings": [
+
+],
+"blocks": [
+{
+"type": "product_option_setting",
+"name": "Product option setting",
+"settings": [
+{
+"type": "product",
+"id": "product",
+"label": "Product",
+"info": "Associate with the product. Is not required field. If selected - you can assign to only for 'Products'"
+},
+{
+"type": "text",
+"id": "property",
+"label": "Property"
+},
+{
+"type": "text",
+"id": "value",
+"label": "Value"
+},
+{
+"type": "color",
+"id": "color",
+"label": "Color"
+},
+{
+"type": "image_picker",
+"id": "image",
+"label": "Image"
+},
+{
+"type": "select",
+"id": "assign_to",
+"label": "Assign to",
+"default": "all",
+"options": [
+{
+"value": "all",
+"label": "All"
+},
+{
+"value": "products",
+"label": "Product"
+},
+{
+"value": "filters",
+"label": "Filters"
+}
+]
+},
+{
+"type": "checkbox",
+"id": "disable_default_color",
+"label": "Disable default color",
+"default": false
+},
+{
+"type": "checkbox",
+"id": "disable_default_image",
+"label": "Disable default image",
+"default": false
+}
+]
+}
+]
+}
+{% endschema %}
